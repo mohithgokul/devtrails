@@ -1,229 +1,205 @@
-🚀**SurakshaPay-AI-Powered Parametric Insurance for Gig Delivery Workers**
+# 🚀 SurakshaPay - AI Powered Parametric Insurance for Gig Delivery Workers
 
-📌 **Table of Contents**
+---
 
-1.Problem Statement
+## 📌 Table of Contents
 
-2.Our Solution
+1. Problem Statement  
+2. Our Solution  
+3. Target Persona  
+4. User Scenarios  
+5. Key Features  
+6. System Workflow  
+7. Weekly Premium Model  
+8. Parametric Triggers  
+9. AI/ML Integration  
+10. Tech Stack  
+11. System Architecture  
+12. Conclusion  
 
-3.Target Persona
+---
 
-4.User Scenarios
-
-5.Key Features
-
-6.System Workflow
-
-7.Weekly Premium Model
-
-8.Parametric Triggers
-
-9.AI/ML Integration
-
-10.Tech Stack
-
-11.System Architecture
-
-12.Conclusion
-
-**1.Problem Statement:**
+## 1. Problem Statement:
 
 India’s gig economy relies heavily on delivery workers from platforms like Swiggy, Zomato, Zepto, and Amazon. However, these workers face income instability due to external disruptions such as:
 
-Heavy rainfall
-
-Extreme heat
-
-Pollution
-
-Curfews or strikes
+-Heavy rainfall
+-Extreme heat
+-Pollution
+-Curfews or strikes
 
 These disruptions can reduce their earnings by 20–30%, and currently, no income protection exists for such uncontrollable events.
 
-🚫 Constraints
+### 🚫 Constraints
 
-Only income loss is covered
+- Only income loss is covered  
+- No health, accident, or vehicle insurance  
+- Must follow a weekly pricing model  
 
-No health, accident, or vehicle insurance
+---
 
-Must follow a weekly pricing model
-
-**2.💡Our Solution**
+## 2. 💡 Our Solution
 
 Introducing SurakshaPay
 
 A smart, AI-driven parametric insurance platform that:
 
-Predicts risks using AI
+- Predicts risks using AI  
+- Charges affordable weekly premiums  
+- Detects disruptions automatically  
+- Initiates claims instantly  
+- Pays workers without manual intervention  
 
-Charges affordable weekly premiums
+---
 
-Detects disruptions automatically
+## 3. 👤 Target Persona
 
-Initiates claims instantly
+### 🎯 Primary Persona: Food Delivery Worker
 
-Pays workers without manual intervention
+- **Name:** Ravi Kumar  
+- **Age:** 26  
+- **Platform:** Swiggy  
+- **City:** Bangalore  
 
-**3.👤 Target Persona:**
+### 📊 Profile
 
-🎯 Primary Persona: Food Delivery Worker
+- Daily Earnings: ₹800 – ₹1200  
+- Works 10–12 hours/day  
+- Income depends on weather & demand  
 
-Name: Ravi Kumar
+### 😟 Pain Points
 
-Age: 26
+- Rain → fewer deliveries  
+- Pollution → reduced working hours  
+- No fallback income  
 
-Platform: Swiggy
+---
 
-City: Bangalore
+## 4. User Scenarios
 
-📊 Profile:
-Daily Earnings: ₹800 – ₹1200
-Works 10–12 hours/day
-Income depends on weather & demand
+### Scenario 1: Heavy Rainfall 🌧️
+- Rainfall exceeds threshold  
+- Deliveries drop drastically  
+- System detects disruption  
+- Ravi receives ₹700 instantly  
 
-😟 Pain Points:
+### Scenario 2: Extreme Heat 🔥
+- Temperature crosses 45°C  
+- Worker reduces hours  
+- System triggers partial payout  
 
-Rain → fewer deliveries
+### Scenario 3: Curfew 🚫
+- Area lockdown announced  
+- Worker cannot operate  
+- Full-day compensation credited  
 
-Pollution → reduced working hours
+---
 
-No fallback income
+## 5. 🚀 Key Features
 
-**4. User Scenarios**
-
-Scenario 1: Heavy Rainfall 🌧️
-Rainfall exceeds threshold
-Deliveries drop drastically
-System detects disruption
-Ravi receives ₹700 instantly
-
-Scenario 2: Extreme Heat 🔥
-Temperature crosses 45°C
-Worker reduces hours
-System triggers partial payout
-
-Scenario 3: Curfew 🚫
-Area lockdown announced
-Worker cannot operate
-Full-day compensation credited
-
-**5.Key Features**
-# 🚀 Key Features
-
-## 1. Optimized Onboarding
+### 1. Optimized Onboarding
 Quick and seamless mobile-based onboarding for delivery partners with minimal inputs.
 
-## 2. Risk Assessment
+### 2. Risk Assessment
 AI-driven risk profiling based on location, environmental conditions, and activity patterns.
 
-## 3. Weekly Premium Model
+### 3. Weekly Premium Model
 Personalized weekly pricing aligned with the earning cycle of gig workers.
 
-## 4. Risk-Based Pricing with Volatility
+### 4. Risk-Based Pricing with Volatility
 Dynamic premium calculation incorporating risk variability and uncertainty.
 
-## 5. Parametric Trigger Engine
+### 5. Parametric Trigger Engine
 Automated detection of disruptions using real-time environmental and social data.
 
-## 6. Multi-Source Data Integration
+### 6. Multi-Source Data Integration
 Integration of weather APIs, news data, maps, and platform activity signals.
 
-## 7. Activity Validation System
+### 7. Activity Validation System
 Validates actual work disruption before enabling payouts.
 
-## 8. Automated Payout Processing
+### 8. Automated Payout Processing
 Instant payout execution via UPI without manual claim filing.
 
-## 9. Fixed Coverage Insurance Model
+### 9. Fixed Coverage Insurance Model
 Predefined payout percentage based on the selected coverage plan.
 
-## 10. Fraud Detection System
+### 10. Fraud Detection System
 Anomaly detection and rule-based validation to prevent misuse.
 
-## 11. Predictive Analytics
+### 11. Predictive Analytics
 Identification of high-risk zones and disruption trends.
 
-## 12. Adaptive Learning System
+### 12. Adaptive Learning System
 Continuous improvement of model accuracy using historical data.
 
-## 13. Analytics Dashboard
+### 13. Analytics Dashboard
 Visualization of key metrics such as premiums, payouts, risk ratio, and triggers.
 
-## 14. Event-Driven Architecture
+### 14. Event-Driven Architecture
 Real-time processing of triggers and payouts using event-based systems.
 
-## 15. Scalable Cloud Infrastructure
+### 15. Scalable Cloud Infrastructure
 Cloud-native architecture ensuring scalability, reliability, and high availability.
 
-**6.⚙️ System Workflow:**
+---
+
+## 6. ⚙️ System Workflow
 
 User Onboarding → Risk Profiling → Weekly Policy Creation  
 → Real-Time Monitoring → Trigger Detection → Auto Claim  
-→ Instant Payout
+→ Instant Payout  
 
-Step-by-Step Flow:
+### Step-by-Step Flow
 
-1.User Onboarding
+#### 1. User Onboarding
+- Register via mobile app  
+- Select delivery platform  
+- Enable GPS & activity tracking  
 
-Register via mobile app
-
-Select delivery platform
-
-Enable GPS & activity tracking
-
-2.Risk Profiling
-
+#### 2. Risk Profiling
 AI analyzes:
+- Location risk  
+- Historical weather  
+- Work patterns  
 
-Location risk
+#### 3. Policy Creation
+- Weekly premium calculated  
+- Coverage plan generated  
 
-Historical weather
+#### 4. Monitoring Engine
+Tracks:
+- Weather APIs  
+- Pollution levels  
+- Zone restrictions  
 
-Work patterns
+#### 5. Trigger Activation
+- Parametric condition met  
+- Claim auto-generated  
 
-3.Policy Creation
+#### 6. Payout System
+- Instant transfer via UPI  
 
-Weekly premium calculated
+---
 
-Coverage plan generated
-
-4.Monitoring Engine
-
-Continuously tracks:
-
-Weather APIs
-
-Pollution levels
-
-Zone restrictions
-
-5.Trigger Activation
-
-Parametric condition met
-
-Claim auto-generated
-
-6.Payout System
-
-Instant transfer via UPI
-
-**7.Weekly Premium Model – Working Method**
+## 7. Weekly Premium Model – Working Method
 
 Our platform calculates a **personalized weekly premium** for each gig worker using a data-driven approach that combines expected income loss, disruption probability, and risk uncertainty.
 
-📌 Core Formula
+### 📌 Core Formula
 
 P_w = (L_w × p × α) + (σ × β) + M
 
-Where:
-
+### Where:
 - **P_w** → Weekly Premium  
 - **L_w** → Expected Weekly Income Loss  
 - **p** → Probability of Disruption  
 - **α** → Coverage Factor  
 - **σ** → Risk Volatility  
-- **β** → Risk Sensitivity (Knob)  
+- **β** → Risk Sensitivity  
 - **M** → Platform Margin  
+
+---
 
 Step 1: Estimate Expected Weekly Income Loss (L_w)
 
@@ -475,8 +451,9 @@ This ensures:
 - Adaptability to real-world risks  
 - Financial sustainability of the platform
 
-**8.Parametric Triggers:**
-## 📌 Overview
+## 8. Parametric Triggers
+
+### 📌 Overview
 
 Our platform uses a **parametric insurance model**, where payouts are automatically triggered based on predefined real-world conditions.  
 
@@ -486,13 +463,15 @@ Unlike traditional insurance:
 - ✅ Fully automated triggers  
 - ✅ Instant payout processing  
 
-## 🧠 Core Principle
+---
+
+### 🧠 Core Principle
 
 - **Triggers determine eligibility (YES/NO)**
 - **Coverage plan determines payout amount (fixed percentage)**
 - **Actual income loss determines payout base**
 
-## 🧮 Payout Formula
+### 🧮 Payout Formula
 
 Payout = Actual Loss × Coverage (α)
 
@@ -500,119 +479,119 @@ Where:
 - **Actual Loss** = Verified income lost due to disruption  
 - **α (Coverage Factor)** = Plan-based percentage (0.6 – 0.8)  
 
-## 🌍 Trigger Categories
+### 🌍 Trigger Categories
 
 Parametric triggers are divided into two categories:
 
 1. **Environmental Disruptions** (Natural conditions)
 2. **Social Disruptions** (External/system-driven conditions)
 
-# 🌍 1. Environmental Disruption Triggers
+### 🌍 1. Environmental Disruption Triggers
 
-## 🌧️ 1.1 Extreme Rainfall
+#### 🌧️ 1.1 Extreme Rainfall
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Rainfall > **60mm within 3 hours**
 - Waterlogging or flooding detected
-
-### Activity Validation:
+  
+**Activity Validation:**
 - Orders drop ≥ **50%**
 - Rider activity significantly reduced
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-### Payout Rules:
+**Payout Rules:**
 - Payout = Actual Loss × Coverage (α)
 - Subject to weekly plan cap
 
-## 🌡️ 1.2 Heatwave
+#### 🌡️ 1.2 Heatwave
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Temperature ≥ **45°C**
 
-### Activity Validation:
+**Activity Validation:**
 - Working hours drop ≥ **40%**
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-### Special Rule:
+**Special Rule:**
 - Max payout limited to **80% of daily average income**
 
-## 🌫️ 1.3 Hazardous Air Pollution
+#### 🌫️ 1.3 Hazardous Air Pollution
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - AQI ≥ **450**
 
-### Activity Validation:
+**Activity Validation:**
 - Outdoor work unsafe or reduced significantly
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-### Special Rule:
+**Special Rule:**
 - Max payout capped at **70% of daily income**
 
-## 🌊 1.4 Flood / Waterlogging
+#### 🌊 1.4 Flood / Waterlogging
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Government flood alert OR
 - Roads inaccessible due to waterlogging
 
-### Activity Validation:
+** Activity Validation:**
 - Delivery routes blocked
 - Orders drop ≥ **60%**
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-# 🏙️ 2. Social Disruption Triggers
+### 🏙️ 2. Social Disruption Triggers
 
-## 🚫 2.1 Curfew / Government Restrictions
+#### 🚫 2.1 Curfew / Government Restrictions
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Official curfew or movement restriction
 
-### Activity Validation:
+**Activity Validation:**
 - Orders drop ≥ **80%**
 - Delivery operations halted
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-### Special Rule:
+**Special Rule:**
 - Full-day loss considered
 
-## 📉 2.2 Platform Demand Collapse
+#### 📉 2.2 Platform Demand Collapse
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Orders drop ≥ **70%**
 - No environmental trigger required
 
-### Activity Validation:
+**Activity Validation:**
 - Low platform activity across region
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-### Special Rule:
+**Special Rule:**
 - Only **60% of loss is considered** before applying coverage
 
-## 🚧 2.3 Zone Access Restrictions
+#### 🚧 2.3 Zone Access Restrictions
 
-### Trigger Conditions:
+**Trigger Conditions:**
 - Road closures, barricades, or restricted areas
 
-### Activity Validation:
+**Activity Validation:**
 - Delivery routes blocked or inaccessible
 
-### Eligibility:
+**Eligibility:**
 - ✅ Payout triggered
 
-# 🛡️ Trigger Validation Rules
+### 🛡️ Trigger Validation Rules
 
-## 🔹 1. Activity Verification
+**🔹 1. Activity Verification**
 
 Payout is only valid if:
 
@@ -622,28 +601,28 @@ ELSE → No payout
 
 ---
 
-## 🔹 2. Minimum Duration Rule
+**🔹 2. Minimum Duration Rule**
 
 - Trigger must persist for **at least 1–2 hours**
 - Prevents false positives
 
 ---
 
-## 🔹 3. Multiple Trigger Handling
+**🔹 3. Multiple Trigger Handling**
 
 IF multiple triggers occur  
 → Only highest impact trigger considered  
 
-## 🔹 4. Weekly Cap Rule
+**🔹 4. Weekly Cap Rule**
 
 - Total payout cannot exceed:
   - ₹1000 (Basic)
   - ₹2000 (Standard)
   - ₹3000 (Pro)
 
-# 🔄 Payout Cycle
+### 🔄 Payout Cycle
 
-## Step 1: Real-Time Monitoring
+**Step 1: Real-Time Monitoring**
 
 System continuously tracks:
 - Weather APIs  
@@ -651,52 +630,51 @@ System continuously tracks:
 - Order volume  
 - Location data  
 
-## Step 2: Trigger Detection
+**Step 2: Trigger Detection**
 
 IF any trigger condition is met  
 → Event flagged  
 
-## Step 3: Activity Validation
+**Step 3: Activity Validation**
 
 - Check rider’s activity (orders, hours)
 - Confirm actual disruption impact  
 
-## Step 4: Loss Calculation
+**Step 4: Loss Calculation**
 
 Actual Loss =  
 Avg Hourly Income × Hours Lost  
 
-## Step 5: Apply Coverage
+**Step 5: Apply Coverage**
 
 Payout = Actual Loss × Coverage (α)  
 
-## Step 6: Apply Caps
+**Step 6: Apply Caps**
 
 - Plan-based cap applied  
 - Special trigger caps applied (if any)
 
-## Step 7: Instant Payout
+**Step 7: Instant Payout**
 
 - Credited via UPI / wallet  
 - No claim required  
 
-# 📊 Example End-to-End Flow
+### 📊 Example End-to-End Flow
 
-### Scenario:
+**Scenario:**
 - Rainfall = 70mm  
 - Orders drop = 60%  
 - Rider loses 4 hours  
 - Hourly income = ₹100  
 - Plan = Standard (α = 0.7)  
 
-### Calculation:
+**Calculation:**
 
 Actual Loss = 100 × 4 = ₹400  
 
 Payout = 400 × 0.7 = ₹280  
 
-
-# 🎯 Key Design Principles
+### 🎯 Key Design Principles
 
 - **Objectivity** → API-based triggers only  
 - **Automation** → No manual claims  
@@ -704,7 +682,7 @@ Payout = 400 × 0.7 = ₹280
 - **Fraud Prevention** → Activity validation  
 - **Sustainability** → Caps and thresholds  
 
-# 🚀 Conclusion
+### 🚀 Conclusion
 
 This parametric trigger system ensures that:
 
@@ -714,9 +692,9 @@ This parametric trigger system ensures that:
 
 By combining **real-time data, strict thresholds, and fixed coverage**, the system delivers a reliable safety net for gig workers.
 
-**9.🤖 AI/ML Integration**
+## 9. 🤖 AI/ML Integration
 
-## 📌 Overview
+### 📌 Overview
 
 The platform integrates Artificial Intelligence and Machine Learning to enable **intelligent risk assessment, dynamic pricing, predictive insights, and fraud prevention**.
 
@@ -726,136 +704,136 @@ These components ensure:
 - Financial sustainability  
 - Secure and reliable payouts  
 
-# 🧠 AI/ML Components
+### 🧠 AI/ML Components
 
-## 1. Risk Assessment Model
+### 1. Risk Assessment Model
 
-### 🎯 Objective
+**🎯 Objective**
 To evaluate the likelihood of income disruption for each gig worker.
 
-### ⚙️ Functionality
+**⚙️ Functionality**
 - Analyzes environmental, geographic, and behavioral data  
 - Predicts probability of disruption  
 - Generates a normalized risk score for each user  
 
-### 📥 Inputs
+**📥 Inputs**
 - Location and delivery zone  
 - Historical environmental conditions  
 - Platform activity data  
 - Temporal patterns  
 
-### 📤 Outputs
+**📤 Outputs**
 - Probability of disruption (p)  
 - Risk score (0–1 scale)  
 
-### 🧩 Role
+**🧩 Role**
 - Forms the foundation of pricing  
 - Enables personalized risk profiling  
 
-## 2. Risk-Based Premium Calculation with Volatility Adjustment
+### 2. Risk-Based Premium Calculation with Volatility Adjustment
 
-### 🎯 Objective
+**🎯 Objective**
 To compute personalized weekly premiums by combining expected loss, disruption probability, and uncertainty (volatility).
 
-### ⚙️ Functionality
+**⚙️ Functionality**
 - Calculates premiums using risk score and probability  
 - Incorporates variability in income loss using volatility  
 - Adjusts pricing dynamically based on uncertainty  
 - Ensures balance between affordability and sustainability  
 
-### 📥 Inputs
+**📥 Inputs**
 - Probability of disruption (p)  
 - Expected income loss (L_w)  
 - Coverage factor (α)  
 - Historical income variability  
 - Environmental variability
 - 
-### 📤 Outputs
+**📤 Outputs**
 - Weekly premium value  
 - Volatility metric (σ)  
 
-### 🧮 Core Logic
+**🧮 Core Logic**
 - Base premium derived from expected loss and probability  
 - Volatility added as a buffer to handle uncertainty  
 - Final premium adjusted to maintain system stability  
 
-### 🧩 Role
+**🧩 Role**
 - Prevents underpricing during unpredictable conditions  
 - Ensures robustness of pricing model  
 - Maintains financial balance of the system  
 
-## 3. Predictive Analytics
+### 3. Predictive Analytics
 
-### 🎯 Objective
+**🎯 Objective**
 To identify patterns and forecast future disruptions.
 
-### ⚙️ Functionality
+**⚙️ Functionality**
 - Detects high-risk zones and time periods  
 - Identifies trends in environmental and platform data  
 - Provides insights for better decision-making  
 
-### 📥 Inputs
+**📥 Inputs**
 - Historical disruption data  
 - Geographic and environmental data  
 - Platform activity trends  
 
-### 📤 Outputs
+**📤 Outputs**
 - Risk classifications  
 - Zone-based insights  
 - Coverage recommendations  
 
-### 🧩 Role
+**🧩 Role**
 - Supports proactive planning  
 - Enhances system efficiency and scalability  
 
-## 4. Adaptive Learning
+### 4. Adaptive Learning
 
-### 🎯 Objective
+**🎯 Objective**
 To continuously improve model accuracy over time.
 
-### ⚙️ Functionality
+**⚙️ Functionality**
 - Learns from historical claims and payouts  
 - Updates model parameters based on real outcomes  
 - Refines predictions using feedback loops  
 
-### 📥 Inputs
+**📥 Inputs**
 - Historical claims data  
 - Prediction errors  
 - User activity patterns  
 
-### 📤 Outputs
+**📤 Outputs**
 - Updated model parameters  
 - Improved prediction accuracy  
 
-### 🧩 Role
+**🧩 Role**
 - Ensures long-term system optimization  
 - Adapts to changing real-world conditions  
 
-## 5. Fraud Detection & Activity Validation
+### 5. Fraud Detection & Activity Validation
 
-### 🎯 Objective
+**🎯 Objective**
 To ensure payouts are issued only for genuine disruptions.
 
-### ⚙️ Functionality
+**⚙️ Functionality**
 - Validates user activity against trigger conditions  
 - Detects anomalies in behavior and claim patterns  
 - Identifies inconsistencies in location and activity data
   
-### 📥 Inputs
+**📥 Inputs**
 - GPS/location data  
 - User activity logs  
 - Trigger event data  
 - Historical behavior patterns  
 
-### 📤 Outputs
+**📤 Outputs**
 - Fraud risk score  
 - Validation status (approved / flagged / rejected)  
 
-### 🧩 Role
+**🧩 Role**
 - Prevents misuse and false claims  
 - Protects financial integrity of the platform  
 
-# 🔄 AI/ML Workflow
+### 🔄 AI/ML Workflow
 
 User Data → Risk Assessment Model → Risk Score & Probability
 → Premium + Volatility Engine → Weekly Premium
@@ -864,55 +842,36 @@ Trigger Event → Activity Validation → Fraud Detection
 → Loss Verification → Payout Processing
 Feedback Loop → Adaptive Learning → Model Improvement
 
-# AIML Algorithms or models that will be used for the above mentioned features are: 
+### AIML Algorithms or models that will be used for the above mentioned features are: 
 
-1. Risk Assessment Model
+#### 1. Risk Assessment Model
+- Random Forest  
+- XGBoost  
+- Logistic Regression  
 
-Random Forest Classifier
+#### 2. Premium Calculation
+- Linear Regression  
+- Random Forest Regressor  
+- Volatility metrics  
 
-Gradient Boosting (XGBoost / LightGBM)
+#### 3. Predictive Analytics
+- K-Means  
+- DBSCAN  
+- ARIMA  
+- Prophet  
 
-Logistic Regression
+#### 4. Adaptive Learning
+- Online learning  
+- Retraining pipelines  
 
-2. Risk-Based Premium Calculation with Volatility
+#### 5. Fraud Detection
+- Isolation Forest  
+- LOF  
+- Rule-based validation  
 
-Linear Regression / Ridge Regression
+---
 
-Random Forest Regressor
-
-Gradient Boosting Regressor
-
-Standard Deviation / Rolling Variance
-
-3. Predictive Analytics
-
-K-Means Clustering
-
-DBSCAN
-
-ARIMA
-
-Facebook Prophet
-
-4. Adaptive Learning
-
-Incremental Learning (Online Learning)
-
-Model Retraining Pipelines
-
-Reinforcement Learning (Optional)
-
-5. Fraud Detection & Activity Validation
-
-Isolation Forest
-
-Local Outlier Factor (LOF)
-
-Random Forest Classifier
-
-Rule-Based Validation System
-
-# 🎯 Key Benefits
+### 🎯 Key Benefits
 
 - Personalized and adaptive pricing  
 - Robust handling of uncertainty  
@@ -922,13 +881,13 @@ Rule-Based Validation System
 
 ---
 
-# 🚀 Conclusion
+### 🚀 Conclusion
 
 The AI/ML system combines risk prediction, volatility handling, and adaptive learning to deliver a **stable, fair, and intelligent parametric insurance platform**.
 
-# 10.Tech Stack & Architecture
+## 10.Tech Stack & Architecture
 
-## 📌 Overview
+### 📌 Overview
 
 The platform uses a **cloud-native, microservices-based architecture** to support:
 
@@ -937,24 +896,24 @@ The platform uses a **cloud-native, microservices-based architecture** to suppor
 - Automated payouts  
 - Scalable analytics  
 
-# 📱 Frontend
+### 📱 Frontend
 
-## Mobile App (Rider)
+ **Mobile App (Rider)**
 - Flutter  
 - Google Maps SDK  
 - Firebase Cloud Messaging  
 
-## Admin Dashboard
+ **Admin Dashboard**
 - React.js (Next.js)  
 - Tailwind CSS  
 - Recharts / Chart.js  
 
-# 🔐 Backend
+### 🔐 Backend
 
 - Node.js (NestJS) → Core APIs orchestration and business logic 
 - Python (FastAPI) → AI/ML services  
 
-## Microservices
+ **Microservices**
 - User Service  
 - Policy & Pricing Service  
 - Trigger Engine Service
@@ -962,45 +921,45 @@ The platform uses a **cloud-native, microservices-based architecture** to suppor
 - Fraud Detection  
 - Analytics Service 
 
-# 🤖 AI/ML Layer
+### 🤖 AI/ML Layer
 
 - Python
 - Scikit-learn  
 - XGBoost / LightGBM  
 - Pandas, NumPy  
 
-### Capabilities:
+ **Capabilities:**
 - Risk assessment and scoring 
 - Premium calculation with volatility   
 - Predictive analytics
 - Adaptive Learning 
 - Fraud detection and anomaly detection
 
-🚀 Model Serving
+ **🚀 Model Serving**
 
 - FastAPI REST endpoints  
 - Dockerized ML services
   
-# 🗄️ Data Layer
+### 🗄️ Data Layer
 
 - **MySQL** → Primary database  
 - **Redis** → Caching & real-time processing  
 
-# 🌐 External Integrations
+### 🌐 External Integrations
 
-## Environmental Data
+ **Environmental Data**
 - OpenWeather API
 - WeatherStack  
 - AQI API  
 
-## Social Disruption Data
+ **Social Disruption Data**
 - NewsAPI  
 - GNews API  
 - Google Maps Platform  
 - Mock delivery activity data  
 - (Optional) Twitter API  
 
-## 📦 Platform Activity Data (Simulated)
+### 📦 Platform Activity Data (Simulated)
 
 - Mock APIs for:
   - Order volume  
@@ -1010,53 +969,53 @@ Used for:
 - Detecting demand collapse  
 - Validating real disruption impact
   
-# ⚡ Trigger Engine
+### ⚡ Trigger Engine
 
 - Node.js / Python  
 - Apache Kafka / RabbitMQ  
 
-### Role:
+ **Role:**
 - Process real-time data  
 - Detect disruption events  
 - Trigger payouts  
 
-# 💰 Payout System
+### 💰 Payout System
 
 - Razorpay Payout APIs  
 - UPI-based transfers  
 - Webhook-based confirmation  
 
-# 🛡️ Fraud Detection
+### 🛡️ Fraud Detection
 
 - Python ML models  
 - Isolation Forest / LOF  
 - Rule-based validation engine  
 
-# 📊 Analytics & Monitoring
+### 📊 Analytics & Monitoring
 
 - React Dashboard  
 - Prometheus + Grafana  
 - ELK Stack  
 
-# ☁️ Cloud & DevOps
+### ☁️ Cloud & DevOps
 
 - AWS (EC2, S3, RDS - MySQL)  
 - Containerization - Docker  
 - CI/CD - GitHub Actions
   
-# 🔐 Security
+### 🔐 Security
 
 - Firebase Auth / Auth0  
 - JWT-based authentication  
 - Role-Based Access Control (RBAC)  
 
-# 🔄 System Flow
+### 🔄 System Flow
 Mobile App → Backend APIs → AI Services → Premium Calculation
 → Trigger Engine (Weather + News + Maps + Activity Data)
 → Fraud Validation → Payout Processing
 → Analytics Dashboard
 
-# 🎯 Deliverable Mapping
+### 🎯 Deliverable Mapping
 
 | Deliverable | Technology |
 |------------|-----------|
@@ -1067,7 +1026,7 @@ Parametric Triggers | Kafka + Multi-Source Trigger Engine |
 Payout Processing | Razorpay + Backend APIs |
 Analytics Dashboard | React + Chart Libraries |
 
-# 🚀 Conclusion
+### 🚀 Conclusion
 
 The system leverages a **multi-source, AI-driven architecture** combining:
 
