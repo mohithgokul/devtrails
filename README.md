@@ -6,16 +6,15 @@
 
 1. Problem Statement  
 2. Our Solution  
-3. Target Persona  
-4. User Scenarios  
-5. Key Features  
-6. System Workflow  
-7. Weekly Premium Model  
-8. Parametric Triggers  
-9. AI/ML Integration  
-10. Tech Stack  
-11. System Architecture  
-12. Conclusion  
+3. Target Persona   
+4. Key Features  
+5. System Workflow  
+6. Weekly Premium Model  
+7. Parametric Triggers  
+8. AI/ML Integration  
+9. Tech Stack  
+10. System Architecture  
+11. Conclusion  
 
 ---
 
@@ -49,7 +48,6 @@ A smart, AI-driven parametric insurance platform that:
 ### 🎯 Primary Persona: Food Delivery Worker
 
 - **Name:** Ravi Kumar  
-- **Age:** 26  
 - **Platform:** Swiggy  
 - **City:** Bangalore  
 
@@ -59,35 +57,17 @@ A smart, AI-driven parametric insurance platform that:
 - Works 10–12 hours/day  
 - Income depends on weather & demand  
 
-### 😟 Pain Points
+### User Scenarios
 
-- Rain → fewer deliveries  
-- Pollution → reduced working hours  
+- Heavy Rainfall 🌧️→ fewer deliveries  
+- Pollution → reduced working hours
+- Extreme Heat 🔥→ worker reduces hours
+- Curfew 🚫 → Inability to access pickup/drop locations 
 - No fallback income  
 
 ---
 
-## 4. User Scenarios
-
-### Scenario 1: Heavy Rainfall 🌧️
-- Rainfall exceeds threshold  
-- Deliveries drop drastically  
-- System detects disruption  
-- Ravi receives ₹700 instantly  
-
-### Scenario 2: Extreme Heat 🔥
-- Temperature crosses 45°C  
-- Worker reduces hours  
-- System triggers partial payout  
-
-### Scenario 3: Curfew 🚫
-- Area lockdown announced  
-- Worker cannot operate  
-- Full-day compensation credited  
-
----
-
-## 5. 🚀 Key Features
+## 4. 🚀 Key Features
 
 ### 1. Optimized Onboarding
 Quick and seamless mobile-based onboarding for delivery partners with minimal inputs.
@@ -133,7 +113,7 @@ Workers who do not make claims for a specific period receive discounts on future
 
 ---
 
-## 6. ⚙️ System Workflow
+## 5. ⚙️ System Workflow
 
 User Onboarding → Risk Profiling → Weekly Policy Creation  
 → Real-Time Monitoring → Trigger Detection → Auto Claim  
@@ -171,7 +151,7 @@ Tracks:
 
 ---
 
-## 7. Weekly Premium Model – Working Method
+## 6. Weekly Premium Model – Working Method
 
 Our platform calculates a **personalized weekly premium** for each gig worker using a data-driven approach that combines expected income loss, disruption probability, and risk uncertainty.
 
@@ -308,7 +288,7 @@ This ensures:
 - Adaptability to real-world risks  
 - Financial sustainability of the platform
 
-## 8. Parametric Triggers
+## 7. Parametric Triggers
 
 ### 📌 Overview
 
@@ -451,8 +431,7 @@ Parametric triggers are divided into two categories:
 
 Payout is only valid if:
 
-IF (Trigger = TRUE) AND (Activity Drop ≥ Threshold)  
-→ Eligible  
+IF (Trigger = TRUE) AND (Activity Drop ≥ Threshold)→ Eligible  
 ELSE → No payout  
 
 ---
@@ -532,7 +511,7 @@ Payout = 400 × 0.7 = ₹280
 
 By combining **real-time data, strict thresholds, and fixed coverage**, the system delivers a reliable safety net for gig workers.
 
-## 9. 🤖 AI/ML Integration
+## 8. 🤖 AI/ML Integration
 
 ### 📌 Overview
 
@@ -661,7 +640,7 @@ Feedback Loop → Adaptive Learning → Model Improvement
 
 ---
 
-## 10.Tech Stack & Architecture
+## 9.Tech Stack & Architecture
 
 ### 📌 Overview
 
