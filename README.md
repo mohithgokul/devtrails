@@ -107,7 +107,55 @@ Area lockdown announced
 Worker cannot operate
 Full-day compensation credited
 
-**5.⚙️ System Workflow:**
+**5.Key Features**
+# 🚀 Key Features
+
+## 1. Optimized Onboarding
+Quick and seamless mobile-based onboarding for delivery partners with minimal inputs.
+
+## 2. Risk Assessment
+AI-driven risk profiling based on location, environmental conditions, and activity patterns.
+
+## 3. Weekly Premium Model
+Personalized weekly pricing aligned with the earning cycle of gig workers.
+
+## 4. Risk-Based Pricing with Volatility
+Dynamic premium calculation incorporating risk variability and uncertainty.
+
+## 5. Parametric Trigger Engine
+Automated detection of disruptions using real-time environmental and social data.
+
+## 6. Multi-Source Data Integration
+Integration of weather APIs, news data, maps, and platform activity signals.
+
+## 7. Activity Validation System
+Validates actual work disruption before enabling payouts.
+
+## 8. Automated Payout Processing
+Instant payout execution via UPI without manual claim filing.
+
+## 9. Fixed Coverage Insurance Model
+Predefined payout percentage based on the selected coverage plan.
+
+## 10. Fraud Detection System
+Anomaly detection and rule-based validation to prevent misuse.
+
+## 11. Predictive Analytics
+Identification of high-risk zones and disruption trends.
+
+## 12. Adaptive Learning System
+Continuous improvement of model accuracy using historical data.
+
+## 13. Analytics Dashboard
+Visualization of key metrics such as premiums, payouts, risk ratio, and triggers.
+
+## 14. Event-Driven Architecture
+Real-time processing of triggers and payouts using event-based systems.
+
+## 15. Scalable Cloud Infrastructure
+Cloud-native architecture ensuring scalability, reliability, and high availability.
+
+**6.⚙️ System Workflow:**
 
 User Onboarding → Risk Profiling → Weekly Policy Creation  
 → Real-Time Monitoring → Trigger Detection → Auto Claim  
@@ -159,7 +207,7 @@ Claim auto-generated
 
 Instant transfer via UPI
 
-**6.Weekly Premium Model – Working Method**
+**7.Weekly Premium Model – Working Method**
 
 Our platform calculates a **personalized weekly premium** for each gig worker using a data-driven approach that combines expected income loss, disruption probability, and risk uncertainty.
 
@@ -286,13 +334,13 @@ M = ₹10
 - β = 0.2  
 - M = 10  
 
-**Step 1: Core Risk Cost**
+ **Step 1: Core Risk Cost**
 600 × 0.3 × 0.7 = 126  
 
-**Step 2: Volatility Adjustment**
+ **Step 2: Volatility Adjustment**
 269 × 0.2 = 53.8  
 
-**Step 3: Final Premium**
+ **Step 3: Final Premium**
 P_w = 126 + 53.8 + 10 = ₹189.8 ≈ ₹190/week  
 Step 3: Apply Coverage Factor (α)
 
@@ -306,7 +354,7 @@ Plan Options:
 | Standard | 0.7 |
 | Pro | 0.85 |
 
-**Step 4: Calculate Risk Volatility (σ)**
+ **Step 4: Calculate Risk Volatility (σ)**
 
 Risk volatility measures how unpredictable income loss is over time.
 
@@ -337,7 +385,7 @@ Example:
 - Captures uncertainty in disruptions  
 - Prevents underpricing during extreme events  
 
-**Step 5: Determine Risk Sensitivity (β**)
+ **Step 5: Determine Risk Sensitivity (β**)
 
 β controls how much importance is given to volatility in pricing.
 
@@ -367,7 +415,7 @@ Process:
 - Controls pricing safety  
 - Balances affordability and sustainability  
 
-**Step 6: Add Platform Margin (M)**
+ **Step 6: Add Platform Margin (M)**
 
 A fixed margin is added to cover operational costs.
 
@@ -377,7 +425,7 @@ M = ₹5 to ₹15
 Example:
 M = ₹10  
 
-**Step 7: Final Premium Calculation**
+ **Step 7: Final Premium Calculation**
 
  Given:
 - L_w = 600  
@@ -397,7 +445,7 @@ Step 3: Final Premium
 P_w = 126 + 53.8 + 10 = ₹189.8 ≈ ₹190/week  
 
 
- **Step 8: Risk Ratio Validation**
+**Step 8: Risk Ratio Validation**
 
 After computing premiums, we validate sustainability using:
 
@@ -427,7 +475,7 @@ This ensures:
 - Adaptability to real-world risks  
 - Financial sustainability of the platform
 
-**7.Parametric Triggers:**
+**8.Parametric Triggers:**
 ## 📌 Overview
 
 Our platform uses a **parametric insurance model**, where payouts are automatically triggered based on predefined real-world conditions.  
@@ -666,7 +714,7 @@ This parametric trigger system ensures that:
 
 By combining **real-time data, strict thresholds, and fixed coverage**, the system delivers a reliable safety net for gig workers.
 
-**8.🤖 AI/ML Integration**
+**9.🤖 AI/ML Integration**
 
 ## 📌 Overview
 
@@ -878,7 +926,7 @@ Rule-Based Validation System
 
 The AI/ML system combines risk prediction, volatility handling, and adaptive learning to deliver a **stable, fair, and intelligent parametric insurance platform**.
 
-# 9.Tech Stack & Architecture
+# 10.Tech Stack & Architecture
 
 ## 📌 Overview
 
@@ -1007,9 +1055,6 @@ Mobile App → Backend APIs → AI Services → Premium Calculation
 → Trigger Engine (Weather + News + Maps + Activity Data)
 → Fraud Validation → Payout Processing
 → Analytics Dashboard
-
-
----
 
 # 🎯 Deliverable Mapping
 
