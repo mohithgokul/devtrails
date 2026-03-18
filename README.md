@@ -30,14 +30,6 @@ India’s gig economy relies heavily on delivery workers from platforms like Swi
 
 These disruptions can reduce their earnings by 20–30%, and currently, no income protection exists for such uncontrollable events.
 
-### 🚫 Constraints
-
-- Only income loss is covered  
-- No health, accident, or vehicle insurance  
-- Must follow a weekly pricing model  
-
----
-
 ## 2. 💡 Our Solution
 
 Introducing SurakshaPay
@@ -100,20 +92,20 @@ A smart, AI-driven parametric insurance platform that:
 ### 1. Optimized Onboarding
 Quick and seamless mobile-based onboarding for delivery partners with minimal inputs.
 
-### 2. Risk Assessment
+### 2. Payroll-Based Premium Deduction
+Insurance premium is automatically deducted from weekly earnings, eliminating the need for manual payments.
+
+### 3. Risk Assessment
 AI-driven risk profiling based on location, environmental conditions, and activity patterns.
 
-### 3. Weekly Premium Model
+### 4. Weekly Premium Model
 Personalized weekly pricing aligned with the earning cycle of gig workers.
 
-### 4. Risk-Based Pricing with Volatility
+### 5. Risk-Based Pricing with Volatility
 Dynamic premium calculation incorporating risk variability and uncertainty.
 
-### 5. Parametric Trigger Engine
+### 6. Parametric Trigger Engine
 Automated detection of disruptions using real-time environmental and social data.
-
-### 6. Multi-Source Data Integration
-Integration of weather APIs, news data, maps, and platform activity signals.
 
 ### 7. Activity Validation System
 Validates actual work disruption before enabling payouts.
@@ -136,11 +128,8 @@ Continuous improvement of model accuracy using historical data.
 ### 13. Analytics Dashboard
 Visualization of key metrics such as premiums, payouts, risk ratio, and triggers.
 
-### 14. Event-Driven Architecture
-Real-time processing of triggers and payouts using event-based systems.
-
-### 15. Scalable Cloud Infrastructure
-Cloud-native architecture ensuring scalability, reliability, and high availability.
+### 14. No-Claim Bonus System
+Workers who do not make claims for a specific period receive discounts on future premiums, encouraging responsible usage.
 
 ---
 
@@ -201,14 +190,14 @@ P_w = (L_w × p × α) + (σ × β) + M
 
 ---
 
-Step 1: Estimate Expected Weekly Income Loss (L_w)
+**Step 1: Estimate Expected Weekly Income Loss (L_w)**
 
 This represents how much income a rider is likely to lose in a typical week due to disruptions.
 
 ### Formula:
 L_w = Avg Hourly Income × Hours Lost per Event × Events per Week
  
-Step 2: Calculate Probability of Disruption (p)
+**Step 2: Calculate Probability of Disruption (p)**
 
 This represents the likelihood that a disruption will occur in a given week.
 
@@ -217,108 +206,7 @@ This represents the likelihood that a disruption will occur in a given week.
 - Historical disruption data
 - City-level risk patterns
 
-Step 3: Apply Coverage Factor (α)
-
-Coverage factor defines what percentage of income loss is covered under the plan.
-
-Plan Options:
-
-| Plan | Coverage (α) |
-|------|-------------|
-| Basic | 0.6 |
-| Standard | 0.7 |
-| Pro | 0.85 |
-
- Step 4: Calculate Risk Volatility (σ)
-
-Risk volatility measures how unpredictable income loss is over time.
-
-✅ Preferred Method: Standard Deviation
-
-σ = sqrt( (1/n) × Σ(x_i − μ)^2 )
-
-Where:
-- x_i = historical weekly losses  
-- μ = average loss  
-
-Example:
-
-Weekly losses:
-100, 200, 300, 800  
-
-- Average (μ) = 350  
-- σ ≈ 269  
-
-⚡ Alternative (if limited data):
-
-σ ≈ Max Loss − Avg Loss  
-
-Example:
-σ ≈ 800 − 350 = 450  
-
- 🎯 Purpose:
-- Captures uncertainty in disruptions  
-- Prevents underpricing during extreme events  
-
- Step 5: Determine Risk Sensitivity (β)
-
-β controls how much importance is given to volatility in pricing.
-
-✅ Preferred Method: Simulation-Based Calibration
-
-Process:
-1. Test multiple β values (0.1 to 0.3)
-2. Simulate past scenarios
-3. Evaluate:
-   - Risk Ratio (payouts / premiums)
-   - Profitability
-   - Affordability
-
-4. Select β where:
-   - Risk Ratio ≈ 60–80%
-   - Premium remains affordable
-
-⚡ Practical Implementation (Phase 1):
-
-β = 0.15 + (Risk Score × 0.1)
-
- Example:
-- Risk Score = 0.5  
-- β = 0.15 + (0.5 × 0.1) = 0.20  
-
-🎯 Purpose:
-- Controls pricing safety  
-- Balances affordability and sustainability  
-
-Step 6: Add Platform Margin (M)
-
-A fixed margin is added to cover operational costs.
-
-Typical Range:
-M = ₹5 to ₹15  
-
-Example:
-M = ₹10  
-
- Step 7: Final Premium Calculation
-
- Given:
-- L_w = 600  
-- p = 0.3  
-- α = 0.7  
-- σ = 269  
-- β = 0.2  
-- M = 10  
-
- **Step 1: Core Risk Cost**
-600 × 0.3 × 0.7 = 126  
-
- **Step 2: Volatility Adjustment**
-269 × 0.2 = 53.8  
-
- **Step 3: Final Premium**
-P_w = 126 + 53.8 + 10 = ₹189.8 ≈ ₹190/week  
-Step 3: Apply Coverage Factor (α)
+**Step 3: Apply Coverage Factor (α)**
 
 Coverage factor defines what percentage of income loss is covered under the plan.
 
@@ -342,26 +230,11 @@ Where:
 - x_i = historical weekly losses  
 - μ = average loss  
 
-Example:
-
-Weekly losses:
-100, 200, 300, 800  
-
-- Average (μ) = 350  
-- σ ≈ 269  
-
-⚡ Alternative (if limited data):
-
-σ ≈ Max Loss − Avg Loss  
-
-Example:
-σ ≈ 800 − 350 = 450  
-
- 🎯 Purpose:
+🎯 Purpose:
 - Captures uncertainty in disruptions  
 - Prevents underpricing during extreme events  
 
- **Step 5: Determine Risk Sensitivity (β**)
+**Step 5: Determine Risk Sensitivity (β)**
 
 β controls how much importance is given to volatility in pricing.
 
@@ -374,34 +247,19 @@ Process:
    - Risk Ratio (payouts / premiums)
    - Profitability
    - Affordability
-
 4. Select β where:
    - Risk Ratio ≈ 60–80%
    - Premium remains affordable
-
-⚡Practical Implementation (Phase 1):
-
-β = 0.15 + (Risk Score × 0.1)
-
- Example:
-- Risk Score = 0.5  
-- β = 0.15 + (0.5 × 0.1) = 0.20  
 
 🎯 Purpose:
 - Controls pricing safety  
 - Balances affordability and sustainability  
 
- **Step 6: Add Platform Margin (M)**
+**Step 6: Add Platform Margin (M)**
 
-A fixed margin is added to cover operational costs.
+A fixed margin is added to cover operational costs (Typical Range: M = ₹5 to ₹15)
 
-Typical Range:
-M = ₹5 to ₹15  
-
-Example:
-M = ₹10  
-
- **Step 7: Final Premium Calculation**
+**Step 7: Final Premium Calculation**
 
  Given:
 - L_w = 600  
@@ -411,15 +269,14 @@ M = ₹10
 - β = 0.2  
 - M = 10  
 
-Step 1: Core Risk Cost
+-Step 1: Core Risk Cost
 600 × 0.3 × 0.7 = 126  
-
-Step 2: Volatility Adjustment
+-Step 2: Volatility Adjustment
 269 × 0.2 = 53.8  
-
-Step 3: Final Premium
+-Step 3: Final Premium
 P_w = 126 + 53.8 + 10 = ₹189.8 ≈ ₹190/week  
 
+---
 
 **Step 8: Risk Ratio Validation**
 
@@ -457,8 +314,7 @@ This ensures:
 
 Our platform uses a **parametric insurance model**, where payouts are automatically triggered based on predefined real-world conditions.  
 
-Unlike traditional insurance:
-- ❌ No manual claims  
+Unlike traditional insurance:  
 - ❌ No subjective verification  
 - ✅ Fully automated triggers  
 - ✅ Instant payout processing  
@@ -674,22 +530,6 @@ Actual Loss = 100 × 4 = ₹400
 
 Payout = 400 × 0.7 = ₹280  
 
-### 🎯 Key Design Principles
-
-- **Objectivity** → API-based triggers only  
-- **Automation** → No manual claims  
-- **Fairness** → Fixed coverage percentages  
-- **Fraud Prevention** → Activity validation  
-- **Sustainability** → Caps and thresholds  
-
-### 🚀 Conclusion
-
-This parametric trigger system ensures that:
-
-- Gig workers are compensated only during **true disruptions**
-- Payouts are **predictable and transparent**
-- The platform remains **financially sustainable**
-
 By combining **real-time data, strict thresholds, and fixed coverage**, the system delivers a reliable safety net for gig workers.
 
 ## 9. 🤖 AI/ML Integration
@@ -716,16 +556,6 @@ To evaluate the likelihood of income disruption for each gig worker.
 - Predicts probability of disruption  
 - Generates a normalized risk score for each user  
 
-**📥 Inputs**
-- Location and delivery zone  
-- Historical environmental conditions  
-- Platform activity data  
-- Temporal patterns  
-
-**📤 Outputs**
-- Probability of disruption (p)  
-- Risk score (0–1 scale)  
-
 **🧩 Role**
 - Forms the foundation of pricing  
 - Enables personalized risk profiling  
@@ -740,17 +570,6 @@ To compute personalized weekly premiums by combining expected loss, disruption p
 - Incorporates variability in income loss using volatility  
 - Adjusts pricing dynamically based on uncertainty  
 - Ensures balance between affordability and sustainability  
-
-**📥 Inputs**
-- Probability of disruption (p)  
-- Expected income loss (L_w)  
-- Coverage factor (α)  
-- Historical income variability  
-- Environmental variability
-- 
-**📤 Outputs**
-- Weekly premium value  
-- Volatility metric (σ)  
 
 **🧮 Core Logic**
 - Base premium derived from expected loss and probability  
@@ -771,17 +590,7 @@ To identify patterns and forecast future disruptions.
 - Detects high-risk zones and time periods  
 - Identifies trends in environmental and platform data  
 - Provides insights for better decision-making  
-
-**📥 Inputs**
-- Historical disruption data  
-- Geographic and environmental data  
-- Platform activity trends  
-
-**📤 Outputs**
-- Risk classifications  
-- Zone-based insights  
-- Coverage recommendations  
-
+  
 **🧩 Role**
 - Supports proactive planning  
 - Enhances system efficiency and scalability  
@@ -796,15 +605,6 @@ To continuously improve model accuracy over time.
 - Updates model parameters based on real outcomes  
 - Refines predictions using feedback loops  
 
-**📥 Inputs**
-- Historical claims data  
-- Prediction errors  
-- User activity patterns  
-
-**📤 Outputs**
-- Updated model parameters  
-- Improved prediction accuracy  
-
 **🧩 Role**
 - Ensures long-term system optimization  
 - Adapts to changing real-world conditions  
@@ -818,16 +618,6 @@ To ensure payouts are issued only for genuine disruptions.
 - Validates user activity against trigger conditions  
 - Detects anomalies in behavior and claim patterns  
 - Identifies inconsistencies in location and activity data
-  
-**📥 Inputs**
-- GPS/location data  
-- User activity logs  
-- Trigger event data  
-- Historical behavior patterns  
-
-**📤 Outputs**
-- Fraud risk score  
-- Validation status (approved / flagged / rejected)  
 
 **🧩 Role**
 - Prevents misuse and false claims  
@@ -870,20 +660,6 @@ Feedback Loop → Adaptive Learning → Model Improvement
 - Rule-based validation  
 
 ---
-
-### 🎯 Key Benefits
-
-- Personalized and adaptive pricing  
-- Robust handling of uncertainty  
-- Continuous system improvement  
-- Strong fraud prevention  
-- Scalable architecture  
-
----
-
-### 🚀 Conclusion
-
-The AI/ML system combines risk prediction, volatility handling, and adaptive learning to deliver a **stable, fair, and intelligent parametric insurance platform**.
 
 ## 10.Tech Stack & Architecture
 
@@ -1014,24 +790,3 @@ Mobile App → Backend APIs → AI Services → Premium Calculation
 → Trigger Engine (Weather + News + Maps + Activity Data)
 → Fraud Validation → Payout Processing
 → Analytics Dashboard
-
-### 🎯 Deliverable Mapping
-
-| Deliverable | Technology |
-|------------|-----------|
-Optimized Onboarding | Flutter + Firebase/Auth |
-Risk Profiling | AI/ML (XGBoost, Random Forest) |
-Weekly Pricing | FastAPI + Pricing Engine |
-Parametric Triggers | Kafka + Multi-Source Trigger Engine |
-Payout Processing | Razorpay + Backend APIs |
-Analytics Dashboard | React + Chart Libraries |
-
-### 🚀 Conclusion
-
-The system leverages a **multi-source, AI-driven architecture** combining:
-
-- Environmental data  
-- Social disruption intelligence  
-- Real-time event processing  
-
-This ensures a **robust, scalable, and production-ready parametric insurance platform**, aligned with modern insurtech standards and Guidewire DevTrails expectations.
