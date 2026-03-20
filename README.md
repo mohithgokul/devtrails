@@ -1,28 +1,28 @@
 # 🚀 SurakshaPay - AI Powered Parametric Insurance for Gig Delivery Workers
 
-## 📌 Table of Contents(with Quick Links)
+## 📌 Table of Contents
 
-[![Problem](https://img.shields.io/badge/Problem-Statement-blue)](#1-problem-statement)
+1. [![Problem](https://img.shields.io/badge/Problem-Statement-blue)](#1-problem-statement)
 
-[![Solution](https://img.shields.io/badge/Our-Solution-green)](#2--our-solution)
+2. [![Solution](https://img.shields.io/badge/Our-Solution-green)](#2--our-solution)
 
-[![Persona](https://img.shields.io/badge/Target-Persona-orange)](#3--target-persona)
+3. [![Persona](https://img.shields.io/badge/Target-Persona-orange)](#3--target-persona)
 
-[![Features](https://img.shields.io/badge/Key-Features-purple)](#4--key-features)
+4.[![Features](https://img.shields.io/badge/Key-Features-purple)](#4--key-features)
 
-[![Workflow](https://img.shields.io/badge/System-Workflow-red)](#5--system-workflow)
+5. [![Workflow](https://img.shields.io/badge/System-Workflow-red)](#5--system-workflow)
 
-[![Premium](https://img.shields.io/badge/Premium-Model-yellow)](#6-weekly-premium-model--working-method)
+6. [![Premium](https://img.shields.io/badge/Premium-Model-yellow)](#6-weekly-premium-model--working-method)
 
-[![Triggers](https://img.shields.io/badge/Parametric-Triggers-teal)](#7-parametric-triggers)
+7. [![Triggers](https://img.shields.io/badge/Parametric-Triggers-teal)](#7-parametric-triggers)
 
-[![AI/ML](https://img.shields.io/badge/AI-ML-black)](#8--aiml-integration)
+8. [![AI/ML](https://img.shields.io/badge/AI-ML-black)](#8--aiml-integration)
 
-[![Fraud](https://img.shields.io/badge/Fraud-Detection-critical)](#9-adversarial-defense--anti-spoofing)
+9. [![Fraud](https://img.shields.io/badge/Fraud-Detection-critical)](#9-adversarial-defense--anti-spoofing)
 
-[![Architecture](https://img.shields.io/badge/Architecture-Stack-blueviolet)](#10tech-stack--system-architecture)
+10. [![Architecture](https://img.shields.io/badge/Architecture-Stack-blueviolet)](#10tech-stack--system-architecture)
 
-[![Conclusion](https://img.shields.io/badge/Conclusion-brightgreen)](#11-conclusion)
+11. [![Conclusion](https://img.shields.io/badge/Conclusion-brightgreen)](#11-conclusion)
 
 ---
 
