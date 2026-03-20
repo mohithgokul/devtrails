@@ -8,7 +8,7 @@
 
 3. [![Persona](https://img.shields.io/badge/Target-Persona-orange)](#3--target-persona)
 
-4.[![Features](https://img.shields.io/badge/Key-Features-purple)](#4--key-features)
+4. [![Features](https://img.shields.io/badge/Key-Features-purple)](#4--key-features)
 
 5. [![Workflow](https://img.shields.io/badge/System-Workflow-red)](#5--system-workflow)
 
