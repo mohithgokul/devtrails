@@ -1,5 +1,26 @@
 # 🚀 SurakshaPay - AI Powered Parametric Insurance for Gig Delivery Workers
 
+**Intelligent Parametric Income Protection for the Gig Economy**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Architecture: Event-Driven](https://img.shields.io/badge/Architecture-Event--Driven-blue)](#system-architecture)
+[![Cloud: AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazonaws)](#tech-stack)
+[![Frontend: Next.js](https://img.shields.io/badge/Frontend-Next.js-black?logo=nextdotjs)](#tech-stack)
+[![Mobile: Flutter](https://img.shields.io/badge/Mobile-Flutter-02569B?logo=flutter)](#tech-stack)
+[![Backend: NestJS](https://img.shields.io/badge/Backend-NestJS-E0234E?logo=nestjs)](#tech-stack)
+[![API: FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](#tech-stack)
+[![Runtime: Node.js](https://img.shields.io/badge/Runtime-Node.js-339933?logo=nodedotjs)](#tech-stack)
+[![Language: Python](https://img.shields.io/badge/Language-Python-3776AB?logo=python)](#tech-stack)
+[![Messaging: Kafka](https://img.shields.io/badge/Messaging-Kafka-231F20?logo=apachekafka)](#tech-stack)
+[![Messaging: RabbitMQ](https://img.shields.io/badge/Messaging-RabbitMQ-FF6600?logo=rabbitmq)](#tech-stack)
+[![Database: MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql)](#tech-stack)
+[![Cache: Redis](https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis)](#tech-stack)
+[![Container: Docker](https://img.shields.io/badge/Container-Docker-2496ED?logo=docker)](#tech-stack)
+[![CI/CD: GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub_Actions-2088FF?logo=githubactions)](#tech-stack)
+[![Monitoring: Prometheus](https://img.shields.io/badge/Monitoring-Prometheus-E6522C?logo=prometheus)](#tech-stack)
+[![Dashboards: Grafana](https://img.shields.io/badge/Dashboards-Grafana-F46800?logo=grafana)](#tech-stack)
+[![ML: Enabled](https://img.shields.io/badge/ML-Risk%20Scoring%20%26%20Pricing-purple)](#intelligence-layer)
+[![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-brightgreen)](#roadmap)
 ---
 
 ## 📌 Table of Contents
