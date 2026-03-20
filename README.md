@@ -1,41 +1,28 @@
 # 🚀 SurakshaPay - AI Powered Parametric Insurance for Gig Delivery Workers
 
-**Intelligent Parametric Income Protection for the Gig Economy**
+## 📌 Table of Contents(with Quick Links)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Architecture: Event-Driven](https://img.shields.io/badge/Architecture-Event--Driven-blue)](#system-architecture)
-[![Cloud: AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazonaws)](#tech-stack)
-[![Frontend: Next.js](https://img.shields.io/badge/Frontend-Next.js-black?logo=nextdotjs)](#tech-stack)
-[![Mobile: Flutter](https://img.shields.io/badge/Mobile-Flutter-02569B?logo=flutter)](#tech-stack)
-[![Backend: NestJS](https://img.shields.io/badge/Backend-NestJS-E0234E?logo=nestjs)](#tech-stack)
-[![API: FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](#tech-stack)
-[![Runtime: Node.js](https://img.shields.io/badge/Runtime-Node.js-339933?logo=nodedotjs)](#tech-stack)
-[![Language: Python](https://img.shields.io/badge/Language-Python-3776AB?logo=python)](#tech-stack)
-[![Messaging: Kafka](https://img.shields.io/badge/Messaging-Kafka-231F20?logo=apachekafka)](#tech-stack)
-[![Messaging: RabbitMQ](https://img.shields.io/badge/Messaging-RabbitMQ-FF6600?logo=rabbitmq)](#tech-stack)
-[![Database: MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql)](#tech-stack)
-[![Cache: Redis](https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis)](#tech-stack)
-[![Container: Docker](https://img.shields.io/badge/Container-Docker-2496ED?logo=docker)](#tech-stack)
-[![CI/CD: GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub_Actions-2088FF?logo=githubactions)](#tech-stack)
-[![Monitoring: Prometheus](https://img.shields.io/badge/Monitoring-Prometheus-E6522C?logo=prometheus)](#tech-stack)
-[![Dashboards: Grafana](https://img.shields.io/badge/Dashboards-Grafana-F46800?logo=grafana)](#tech-stack)
-[![ML: Enabled](https://img.shields.io/badge/ML-Risk%20Scoring%20%26%20Pricing-purple)](#intelligence-layer)
-[![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-brightgreen)](#roadmap)
----
+[![Problem](https://img.shields.io/badge/Problem-Statement-blue)](#1-problem-statement)
 
-## 📌 Table of Contents
+[![Solution](https://img.shields.io/badge/Our-Solution-green)](#2--our-solution)
 
-1. Problem Statement  
-2. Our Solution  
-3. Target Persona   
-4. Key Features  
-5. System Workflow  
-6. Weekly Premium Model  
-7. Parametric Triggers  
-8. AI/ML Integration
-9. Adversarial Defense & Anti-Spoofing
-10. Tech Stack & System Architecture    
-11. Conclusion  
+[![Persona](https://img.shields.io/badge/Target-Persona-orange)](#3--target-persona)
+
+[![Features](https://img.shields.io/badge/Key-Features-purple)](#4--key-features)
+
+[![Workflow](https://img.shields.io/badge/System-Workflow-red)](#5--system-workflow)
+
+[![Premium](https://img.shields.io/badge/Premium-Model-yellow)](#6-weekly-premium-model--working-method)
+
+[![Triggers](https://img.shields.io/badge/Parametric-Triggers-teal)](#7-parametric-triggers)
+
+[![AI/ML](https://img.shields.io/badge/AI-ML-black)](#8--aiml-integration)
+
+[![Fraud](https://img.shields.io/badge/Fraud-Detection-critical)](#9-adversarial-defense--anti-spoofing)
+
+[![Architecture](https://img.shields.io/badge/Architecture-Stack-blueviolet)](#10tech-stack--system-architecture)
+
+[![Conclusion](https://img.shields.io/badge/Conclusion-brightgreen)](#11-conclusion)
 
 ---
 
@@ -50,7 +37,7 @@ India’s gig economy relies heavily on delivery workers from platforms like Swi
 
 These disruptions can reduce their earnings by 20–30%, and currently, no income protection exists for such uncontrollable events.
 
-## 2. 💡 Our Solution
+## 2.  Our Solution
 
 Introducing SurakshaPay
 
@@ -64,7 +51,7 @@ A smart, AI-driven parametric insurance platform that:
 
 ---
 
-## 3. 👤 Target Persona
+## 3.  Target Persona
 
 ### 🎯 Primary Persona: Food Delivery Worker
 
@@ -88,7 +75,7 @@ A smart, AI-driven parametric insurance platform that:
 
 ---
 
-## 4. 🚀 Key Features
+## 4.  Key Features
 
 ### 1. Optimized Onboarding
 Quick and seamless mobile-based onboarding for delivery partners with minimal inputs.
@@ -134,7 +121,7 @@ Workers who do not make claims for a specific period receive discounts on future
 
 ---
 
-## 5. ⚙️ System Workflow
+## 5.  System Workflow
 
 User Onboarding → Risk Profiling → Weekly Policy Creation  
 → Real-Time Monitoring → Trigger Detection → Auto Claim  
@@ -532,7 +519,7 @@ Payout = 400 × 0.7 = ₹280
 
 By combining **real-time data, strict thresholds, and fixed coverage**, the system delivers a reliable safety net for gig workers.
 
-## 8. 🤖 AI/ML Integration
+## 8.  AI/ML Integration
 
 ### 📌 Overview
 
@@ -984,7 +971,7 @@ The architecture ensures:
 
 ---
 
-## 11.🚀 Conclusion
+## 11. Conclusion
 
 SurakshaPay reimagines insurance for the gig economy by delivering a **real-time, AI-powered income protection system** built specifically for delivery workers.
 
