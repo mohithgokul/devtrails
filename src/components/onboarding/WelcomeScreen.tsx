@@ -3,9 +3,10 @@ import { Shield, Zap, Heart } from 'lucide-react';
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
+  onLogin: () => void;
 }
 
-const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
+const WelcomeScreen = ({ onGetStarted, onLogin }: WelcomeScreenProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Hero */}
@@ -45,9 +46,17 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           onClick={onGetStarted}
           className="w-full py-4 rounded-2xl gradient-primary text-primary-foreground font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 active:scale-[0.98]"
         >
-          Get Started
+          Create New Account
         </button>
-        <p className="text-center text-xs text-muted-foreground mt-3">
+        
+        <button
+          onClick={onLogin}
+          className="w-full py-3.5 mt-3 rounded-2xl bg-accent text-accent-foreground font-semibold text-base border border-border shadow-sm hover:bg-accent/80 transition-all duration-300 active:scale-[0.98]"
+        >
+          Already have an account? <b>Log In</b>
+        </button>
+        
+        <p className="text-center text-xs text-muted-foreground mt-4">
           Join 50,000+ protected riders across India
         </p>
       </div>

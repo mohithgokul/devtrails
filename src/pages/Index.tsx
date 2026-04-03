@@ -8,11 +8,12 @@ import StepWorkDetails from '@/components/onboarding/StepWorkDetails';
 import StepLocation from '@/components/onboarding/StepLocation';
 import StepRiskProfile from '@/components/onboarding/StepRiskProfile';
 import StepPlanSelection from '@/components/onboarding/StepPlanSelection';
+import LoginScreen from '@/components/onboarding/LoginScreen';
 import LoadingScreen from '@/components/common/LoadingScreen';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-type Screen = 'splash' | 'welcome' | 'registration' | 'loading';
+type Screen = 'splash' | 'welcome' | 'registration' | 'login' | 'loading';
 
 const Index = () => {
   const [screen, setScreen] = useState<Screen>('splash');
@@ -21,7 +22,18 @@ const Index = () => {
 
   const handleSplashComplete = useCallback(() => setScreen('welcome'), []);
   const handleGetStarted = useCallback(() => setScreen('registration'), []);
+  const handleLoginNav = useCallback(() => setScreen('login'), []);
   const handleLoadingComplete = useCallback(() => navigate('/dashboard'), [navigate]);
+
+  const handleLoginSuccess = useCallback((userData: any) => {
+    localStorage.setItem('surakshapay_user', JSON.stringify({
+      id: userData.user_id,
+      name: userData.name,
+      plan: userData.plan,
+      premium: userData.premium,
+    }));
+    navigate('/dashboard');
+  }, [navigate]);
 
   const handleNext = async () => {
     if (!canProceed) return; // Block if step is incomplete
@@ -56,7 +68,8 @@ const Index = () => {
   };
 
   if (screen === 'splash') return <SplashScreen onComplete={handleSplashComplete} />;
-  if (screen === 'welcome') return <WelcomeScreen onGetStarted={handleGetStarted} />;
+  if (screen === 'welcome') return <WelcomeScreen onGetStarted={handleGetStarted} onLogin={handleLoginNav} />;
+  if (screen === 'login') return <LoginScreen onLoginSuccess={handleLoginSuccess} onBack={() => setScreen('welcome')} />;
   if (screen === 'loading') return <LoadingScreen onComplete={handleLoadingComplete} />;
 
   const steps = [

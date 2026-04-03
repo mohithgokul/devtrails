@@ -16,6 +16,7 @@ from pydantic import BaseModel
 import os
 import psycopg2
 import psycopg2.extras
+import bcrypt
 import math
 from typing import List, Optional
 
@@ -70,7 +71,9 @@ def init_db():
             calculated_premium REAL,
             city              TEXT,
             latitude          REAL,
-            longitude         REAL
+            longitude         REAL,
+            email             TEXT UNIQUE,
+            password_hash     TEXT
         )
     ''')
 
@@ -117,6 +120,8 @@ def init_db():
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS city      TEXT"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS latitude  REAL"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS longitude REAL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS email     TEXT UNIQUE"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS password_hash TEXT"),
         ("policies", "ALTER TABLE policies ADD COLUMN IF NOT EXISTS status    TEXT DEFAULT 'active'"),
     ]
     for _, sql in migration_columns:
@@ -153,6 +158,8 @@ class UserRegistration(BaseModel):
     """
     fullName:       str
     phone:          str
+    email:          str
+    password:       str
     workHours:      int
     dailyEarnings:  float
     selectedPlan:   str
@@ -160,6 +167,10 @@ class UserRegistration(BaseModel):
     latitude:       Optional[float] = None  # GPS latitude
     longitude:      Optional[float] = None  # GPS longitude
 
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 class CalculationResult(BaseModel):
     premium:           float
@@ -244,24 +255,33 @@ def register_user(req: UserRegistration):
         from api_fetcher import reverse_geocode
         city = reverse_geocode(req.latitude, req.longitude)
 
+    # Hash password securely using bcrypt
+    pwd_bytes = req.password.encode('utf-8')
+    hashed_password = bcrypt.hashpw(pwd_bytes, bcrypt.gensalt()).decode('utf-8')
+
     conn   = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
-    # Insert the user record with all location fields
-    cursor.execute('''
-        INSERT INTO users (
-            full_name, phone, work_hours, daily_earnings,
-            weekly_income, selected_plan, calculated_premium,
-            city, latitude, longitude
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
-    ''', (
-        req.fullName, req.phone, req.workHours, req.dailyEarnings,
-        req.dailyEarnings * 6,          # weekly_income = dailyEarnings × 6-day week
-        req.selectedPlan, premium,
-        city, req.latitude, req.longitude,
-    ))
-
-    user_id = cursor.fetchone()[0]
+    try:
+        # Insert the user record with all location fields
+        cursor.execute('''
+            INSERT INTO users (
+                full_name, phone, email, password_hash, work_hours, daily_earnings,
+                weekly_income, selected_plan, calculated_premium,
+                city, latitude, longitude
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
+        ''', (
+            req.fullName, req.phone, req.email, hashed_password, req.workHours, req.dailyEarnings,
+            req.dailyEarnings * 6,          # weekly_income = dailyEarnings × 6-day week
+            req.selectedPlan, premium,
+            city, req.latitude, req.longitude,
+        ))
+        
+        user_id = cursor.fetchone()[0]
+    except psycopg2.errors.UniqueViolation:
+        conn.rollback()
+        conn.close()
+        raise HTTPException(status_code=400, detail="Email already registered")
 
     # Derive coverage factor for the selected plan
     alpha_map = {"basic": 0.6, "standard": 0.7, "pro": 0.85}
@@ -281,6 +301,38 @@ def register_user(req: UserRegistration):
         "user_id": user_id,
         "premium": premium,
         "city":    city,
+    }
+
+
+# ---------------------------------------------------------------------------
+# POST /api/login — User login flow
+# ---------------------------------------------------------------------------
+
+@app.post("/api/login", tags=["Users"])
+def login_user(req: UserLogin):
+    """
+    Simulates a secure login endpoint using email and bcrypt password verification.
+    """
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('''
+        SELECT id, full_name, selected_plan, calculated_premium, password_hash 
+        FROM users 
+        WHERE email = %s 
+        ORDER BY id DESC LIMIT 1
+    ''', (req.email,))
+    user = cursor.fetchone()
+    conn.close()
+
+    # Verify user exists and password hash matches
+    if not user or not bcrypt.checkpw(req.password.encode('utf-8'), user["password_hash"].encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    return {
+        "user_id": user["id"],
+        "name":    user["full_name"],
+        "plan":    user["selected_plan"],
+        "premium": user["calculated_premium"],
     }
 
 

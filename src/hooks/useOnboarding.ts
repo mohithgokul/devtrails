@@ -3,7 +3,8 @@ import { useState, useCallback } from 'react';
 export interface OnboardingData {
   fullName: string;
   phone: string;
-  otpVerified: boolean;
+  email: string;
+  password: string;
   profilePhoto: string | null;
   platforms: string[];
   workHours: number;
@@ -24,7 +25,8 @@ export interface OnboardingData {
 const initialData: OnboardingData = {
   fullName: '',
   phone: '',
-  otpVerified: false,
+  email: '',
+  password: '',
   profilePhoto: null,
   platforms: [],
   workHours: 8,
@@ -47,8 +49,13 @@ const initialData: OnboardingData = {
  */
 function isStepValid(step: number, data: OnboardingData): boolean {
   switch (step) {
-    case 0: // Basic Info — name required, phone required & verified
-      return data.fullName.trim().length >= 2 && data.phone.length >= 10 && data.otpVerified;
+    case 0: // Basic Info — name required, phone required, valid email, and pass >= 6
+      return (
+        data.fullName.trim().length >= 2 &&
+        data.phone.length >= 10 &&
+        data.email.includes('@') &&
+        data.password.length >= 6
+      );
     case 1: // Work Details — at least one platform selected
       return data.platforms.length > 0;
     case 2: // Location & Permissions — GPS must be enabled
