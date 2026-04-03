@@ -10,12 +10,14 @@ Endpoints:
   PATCH /api/claims/{claim_id}/status → Admin: update claim status
 """
 
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 
-DB_FILE = "surakshapay.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
 
 router = APIRouter(prefix="/api/claims", tags=["Claims Management"])
 
@@ -59,12 +61,11 @@ def file_claim(req: FileClaimRequest):
 
     If no active policy exists, payout defaults to 0.0.
     """
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Verify user exists ────────────────────────────────────────────────────
-    cursor.execute("SELECT * FROM users WHERE id = ?", (req.user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (req.user_id,))
     user = cursor.fetchone()
     if not user:
         conn.close()
@@ -72,7 +73,7 @@ def file_claim(req: FileClaimRequest):
 
     # ── Look up active policy for payout calculation ──────────────────────────
     cursor.execute(
-        "SELECT * FROM policies WHERE user_id = ? AND (status IS NULL OR status = 'active') ORDER BY id DESC LIMIT 1",
+        "SELECT * FROM policies WHERE user_id = %s AND (status IS NULL OR status = 'active') ORDER BY id DESC LIMIT 1",
         (req.user_id,),
     )
     policy = cursor.fetchone()
@@ -92,10 +93,10 @@ def file_claim(req: FileClaimRequest):
             user_id, trigger_type, risk_level, risk_probability,
             rain, aqi, demand_drop, curfew,
             payout_amount, status
-        ) VALUES (?, ?, 'unknown', 0.0, 0.0, 0, 0, 0, ?, 'pending')
+        ) VALUES (%s, %s, 'unknown', 0.0, 0.0, 0, 0, 0, %s, 'pending') RETURNING id
     ''', (req.user_id, req.trigger_type, payout_amount))
 
-    claim_id = cursor.lastrowid
+    claim_id = cursor.fetchone()[0]
     conn.commit()
     conn.close()
 
@@ -121,19 +122,18 @@ def get_claims(user_id: int):
 
     This feeds the frontend "Claims History" tab and the dashboard widget.
     """
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Verify user exists ────────────────────────────────────────────────────
-    cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT id FROM users WHERE id = %s", (user_id,))
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404, detail=f"User {user_id} not found")
 
     # ── Fetch all claims ──────────────────────────────────────────────────────
     cursor.execute(
-        "SELECT * FROM claims WHERE user_id = ? ORDER BY created_at DESC",
+        "SELECT * FROM claims WHERE user_id = %s ORDER BY created_at DESC",
         (user_id,),
     )
     rows   = cursor.fetchall()
@@ -151,7 +151,7 @@ def get_claims(user_id: int):
                 CASE WHEN status IN ('auto_approved', 'approved')
                 THEN payout_amount ELSE 0 END
             ), 0) AS total_payout_disbursed
-        FROM claims WHERE user_id = ?
+        FROM claims WHERE user_id = %s
     ''', (user_id,))
     s = dict(cursor.fetchone())
 
@@ -193,11 +193,11 @@ def update_claim_status(claim_id: int, req: UpdateStatusRequest):
             detail=f"Invalid status '{req.status}'. Must be one of: {valid_statuses}",
         )
 
-    conn   = sqlite3.connect(DB_FILE)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     # ── Verify the claim exists ───────────────────────────────────────────────
-    cursor.execute("SELECT id, status FROM claims WHERE id = ?", (claim_id,))
+    cursor.execute("SELECT id, status FROM claims WHERE id = %s", (claim_id,))
     row = cursor.fetchone()
     if not row:
         conn.close()
@@ -208,7 +208,7 @@ def update_claim_status(claim_id: int, req: UpdateStatusRequest):
 
     # ── Update the status ─────────────────────────────────────────────────────
     cursor.execute(
-        "UPDATE claims SET status = ? WHERE id = ?",
+        "UPDATE claims SET status = %s WHERE id = %s",
         (new_status, claim_id),
     )
     conn.commit()

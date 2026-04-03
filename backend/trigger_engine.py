@@ -18,10 +18,12 @@ When a trigger fires:
   - Duplicate suppression prevents re-filing the same trigger within 1 hour
 """
 
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 from datetime import datetime, timedelta
 
-DB_FILE = "surakshapay.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
 
 # How long to suppress duplicate triggers for the same user (in hours)
 # Prevents a single assessment loop from filing dozens of identical claims
@@ -43,10 +45,10 @@ def _is_duplicate_trigger(cursor, user_id: int, trigger_type: str) -> bool:
     cursor.execute(
         '''
         SELECT id FROM claims
-        WHERE user_id = ?
-          AND trigger_type = ?
+        WHERE user_id = %s
+          AND trigger_type = %s
           AND status = 'auto_approved'
-          AND created_at >= ?
+          AND created_at >= %s
         LIMIT 1
         ''',
         (user_id, trigger_type, window_start),
@@ -136,7 +138,7 @@ def evaluate_triggers(
 
     # ── Auto-file claims for each fired trigger ───────────────────────────────
     if fired_triggers:
-        conn   = sqlite3.connect(DB_FILE)
+        conn   = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
 
         for trigger in fired_triggers:
@@ -157,7 +159,7 @@ def evaluate_triggers(
                     user_id, trigger_type, risk_level, risk_probability,
                     rain, aqi, demand_drop, curfew,
                     payout_amount, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'auto_approved')
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'auto_approved') RETURNING id
             ''', (
                 user_id,
                 trigger_type,
@@ -170,7 +172,7 @@ def evaluate_triggers(
                 payout_amount,
             ))
 
-            trigger["claim_id"] = cursor.lastrowid
+            trigger["claim_id"] = cursor.fetchone()[0]
             print(
                 f"[trigger] AUTO-APPROVED claim #{trigger['claim_id']} "
                 f"for user {user_id}: {trigger_type} | payout=₹{payout_amount}"

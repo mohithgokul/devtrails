@@ -11,11 +11,13 @@ Endpoints:
   DELETE /api/policies/{user_id}          → Cancel policy (soft delete, status='cancelled')
 """
 
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-DB_FILE = "surakshapay.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
 
 # Plan definitions — single source of truth for this router
 # alpha = coverage factor (fraction of loss that is covered by the plan)
@@ -71,12 +73,11 @@ def get_policy(user_id: int):
     - Max weekly payout (weekly_income × alpha)
     - Status (always 'active' for a current policy)
     """
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Verify user exists ────────────────────────────────────────────────────
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     if not user:
         conn.close()
@@ -85,7 +86,7 @@ def get_policy(user_id: int):
     # ── Fetch the most recent active policy ───────────────────────────────────
     cursor.execute('''
         SELECT * FROM policies
-        WHERE user_id = ? AND (status IS NULL OR status = 'active')
+        WHERE user_id = %s AND (status IS NULL OR status = 'active')
         ORDER BY id DESC LIMIT 1
     ''', (user_id,))
     policy = cursor.fetchone()
@@ -144,12 +145,11 @@ def upgrade_plan(user_id: int, req: UpgradePlanRequest):
             detail=f"Invalid plan '{req.new_plan}'. Must be one of: {list(PLAN_DETAILS.keys())}",
         )
 
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Fetch and validate user ───────────────────────────────────────────────
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     if not user:
         conn.close()
@@ -169,21 +169,21 @@ def upgrade_plan(user_id: int, req: UpgradePlanRequest):
     # ── Soft-cancel all current active policies ───────────────────────────────
     cursor.execute('''
         UPDATE policies SET status = 'cancelled'
-        WHERE user_id = ? AND (status IS NULL OR status = 'active')
+        WHERE user_id = %s AND (status IS NULL OR status = 'active')
     ''', (user_id,))
 
     # ── Insert new active policy ──────────────────────────────────────────────
     cursor.execute('''
         INSERT INTO policies (user_id, plan_name, coverage_factor, weekly_premium, status)
-        VALUES (?, ?, ?, ?, 'active')
+        VALUES (%s, %s, %s, %s, 'active') RETURNING id
     ''', (user_id, new_plan, alpha, new_premium))
 
-    new_policy_id = cursor.lastrowid
+    new_policy_id = cursor.fetchone()[0]
 
     # ── Sync users table ──────────────────────────────────────────────────────
     cursor.execute('''
-        UPDATE users SET selected_plan = ?, calculated_premium = ?
-        WHERE id = ?
+        UPDATE users SET selected_plan = %s, calculated_premium = %s
+        WHERE id = %s
     ''', (new_plan, new_premium, user_id))
 
     conn.commit()
@@ -214,13 +214,13 @@ def cancel_policy(user_id: int):
     This is a soft delete — the record is retained for audit and historical claims.
     The user can re-register or upgrade to get a new active policy.
     """
-    conn   = sqlite3.connect(DB_FILE)
+    conn   = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     # ── Verify there is an active policy to cancel ────────────────────────────
     cursor.execute('''
         SELECT id FROM policies
-        WHERE user_id = ? AND (status IS NULL OR status = 'active')
+        WHERE user_id = %s AND (status IS NULL OR status = 'active')
     ''', (user_id,))
     policy = cursor.fetchone()
 
@@ -231,10 +231,9 @@ def cancel_policy(user_id: int):
             detail=f"No active policy found for user {user_id}",
         )
 
-    # ── Soft-cancel: set status to 'cancelled' ────────────────────────────────
     cursor.execute('''
         UPDATE policies SET status = 'cancelled'
-        WHERE user_id = ? AND (status IS NULL OR status = 'active')
+        WHERE user_id = %s AND (status IS NULL OR status = 'active')
     ''', (user_id,))
 
     conn.commit()

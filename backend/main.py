@@ -13,7 +13,9 @@ Phase 2 complete implementation:
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 import math
 from typing import List, Optional
 
@@ -37,7 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DB_FILE = "surakshapay.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
 
 
 # ---------------------------------------------------------------------------
@@ -50,7 +52,7 @@ def init_db():
     Also runs ALTER TABLE migrations so an existing Phase 1 DB is upgraded
     seamlessly without data loss.
     """
-    conn = sqlite3.connect(DB_FILE)
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     # ── Users table ──────────────────────────────────────────────────────────
@@ -58,7 +60,7 @@ def init_db():
     # latitude, longitude (GPS coordinates for coordinate-based API calls)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            id                SERIAL PRIMARY KEY,
             full_name         TEXT    NOT NULL,
             phone             TEXT    NOT NULL,
             work_hours        INTEGER,
@@ -76,7 +78,7 @@ def init_db():
     # Phase 2 adds: status column ('active' | 'cancelled') for soft-delete
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS policies (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            id              SERIAL PRIMARY KEY,
             user_id         INTEGER,
             plan_name       TEXT,
             coverage_factor REAL,
@@ -92,7 +94,7 @@ def init_db():
     # status: 'pending' | 'approved' | 'rejected' | 'auto_approved'
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS claims (
-            id               INTEGER PRIMARY KEY AUTOINCREMENT,
+            id               SERIAL PRIMARY KEY,
             user_id          INTEGER,
             trigger_type     TEXT,
             risk_level       TEXT,
@@ -112,16 +114,17 @@ def init_db():
     # Each ALTER TABLE is wrapped in try/except; OperationalError means the
     # column already exists (SQLite doesn't support IF NOT EXISTS for columns).
     migration_columns = [
-        ("users",    "ALTER TABLE users    ADD COLUMN city      TEXT"),
-        ("users",    "ALTER TABLE users    ADD COLUMN latitude  REAL"),
-        ("users",    "ALTER TABLE users    ADD COLUMN longitude REAL"),
-        ("policies", "ALTER TABLE policies ADD COLUMN status    TEXT DEFAULT 'active'"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS city      TEXT"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS latitude  REAL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS longitude REAL"),
+        ("policies", "ALTER TABLE policies ADD COLUMN IF NOT EXISTS status    TEXT DEFAULT 'active'"),
     ]
     for _, sql in migration_columns:
         try:
             cursor.execute(sql)
-        except sqlite3.OperationalError:
-            pass  # Column already exists — this is expected on subsequent starts
+            conn.commit()
+        except Exception:
+            conn.rollback()
 
     conn.commit()
     conn.close()
@@ -241,7 +244,7 @@ def register_user(req: UserRegistration):
         from api_fetcher import reverse_geocode
         city = reverse_geocode(req.latitude, req.longitude)
 
-    conn   = sqlite3.connect(DB_FILE)
+    conn   = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     # Insert the user record with all location fields
@@ -250,7 +253,7 @@ def register_user(req: UserRegistration):
             full_name, phone, work_hours, daily_earnings,
             weekly_income, selected_plan, calculated_premium,
             city, latitude, longitude
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
     ''', (
         req.fullName, req.phone, req.workHours, req.dailyEarnings,
         req.dailyEarnings * 6,          # weekly_income = dailyEarnings × 6-day week
@@ -258,7 +261,7 @@ def register_user(req: UserRegistration):
         city, req.latitude, req.longitude,
     ))
 
-    user_id = cursor.lastrowid
+    user_id = cursor.fetchone()[0]
 
     # Derive coverage factor for the selected plan
     alpha_map = {"basic": 0.6, "standard": 0.7, "pro": 0.85}
@@ -267,7 +270,7 @@ def register_user(req: UserRegistration):
     # Insert the initial active policy
     cursor.execute('''
         INSERT INTO policies (user_id, plan_name, coverage_factor, weekly_premium, status)
-        VALUES (?, ?, ?, ?, 'active')
+        VALUES (%s, %s, %s, %s, 'active')
     ''', (user_id, req.selectedPlan, alpha, premium))
 
     conn.commit()
@@ -288,10 +291,9 @@ def register_user(req: UserRegistration):
 @app.get("/api/user/{user_id}", tags=["Users"])
 def get_user(user_id: int):
     """Returns the full user record from the DB."""
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     row = cursor.fetchone()
     conn.close()
 
@@ -316,12 +318,11 @@ def get_dashboard(user_id: int):
 
     This avoids the frontend needing to make 4 separate API calls.
     """
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── 1. Fetch user ────────────────────────────────────────────────────────
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
     if not user:
         conn.close()
@@ -330,7 +331,7 @@ def get_dashboard(user_id: int):
     # ── 2. Fetch active policy ───────────────────────────────────────────────
     cursor.execute('''
         SELECT * FROM policies
-        WHERE user_id = ? AND (status IS NULL OR status = 'active')
+        WHERE user_id = %s AND (status IS NULL OR status = 'active')
         ORDER BY id DESC LIMIT 1
     ''', (user_id,))
     policy = cursor.fetchone()
@@ -347,7 +348,7 @@ def get_dashboard(user_id: int):
                 CASE WHEN status IN ('auto_approved', 'approved')
                 THEN payout_amount ELSE 0 END
             ), 0)                                              AS total_payout
-        FROM claims WHERE user_id = ?
+        FROM claims WHERE user_id = %s
     ''', (user_id,))
     stats_row = cursor.fetchone()
 
@@ -355,7 +356,7 @@ def get_dashboard(user_id: int):
     cursor.execute('''
         SELECT id, trigger_type, status, payout_amount, risk_level, created_at
         FROM claims
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY created_at DESC
         LIMIT 5
     ''', (user_id,))
