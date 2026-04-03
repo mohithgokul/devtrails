@@ -21,7 +21,8 @@ const PremiumCalc = () => {
   useEffect(() => {
     const fetchPremium = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/calculate_premium', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const res = await fetch(`${apiUrl}/api/calculate_premium`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

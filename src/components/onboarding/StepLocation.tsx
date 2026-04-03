@@ -57,7 +57,23 @@ const StepLocation = ({ data, updateData }: Props) => {
         {toggleItems.map(({ key, icon: Icon, label, desc }) => (
           <button
             key={key}
-            onClick={() => updateData({ [key]: !data[key] })}
+            onClick={() => {
+              if (key === 'gpsEnabled' && !data[key]) {
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition((pos) => {
+                    updateData({ 
+                      gpsEnabled: true, 
+                      latitude: pos.coords.latitude, 
+                      longitude: pos.coords.longitude 
+                    });
+                  });
+                } else {
+                  updateData({ gpsEnabled: true });
+                }
+              } else {
+                updateData({ [key]: !data[key] });
+              }
+            }}
             className={cn(
               'w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left',
               data[key]

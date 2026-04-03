@@ -16,6 +16,9 @@ export interface OnboardingData {
   workConditions: string[];
   selectedPlan: string;
   weeklyIncome: number;
+  latitude?: number;
+  longitude?: number;
+  city?: string;
 }
 
 const initialData: OnboardingData = {
@@ -34,6 +37,9 @@ const initialData: OnboardingData = {
   workConditions: [],
   selectedPlan: 'standard',
   weeklyIncome: 4000,
+  latitude: undefined,
+  longitude: undefined,
+  city: undefined,
 };
 
 /**
