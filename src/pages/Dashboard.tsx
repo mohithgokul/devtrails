@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import PremiumCard from '@/components/dashboard/PremiumCard';
@@ -7,57 +7,48 @@ import RiskGauge from '@/components/dashboard/RiskGauge';
 import EarningsChart from '@/components/dashboard/EarningsChart';
 import QuickActions from '@/components/dashboard/QuickActions';
 
+interface RiskData {
+  riskScore: number;
+  riskLevel: string;
+  factors: string[];
+  riskProbability: number;
+}
+
 const Dashboard = () => {
-  // PROOF OF LIFE: Silently hit the backend AI signals endpoint when Dashboard loads.
-  // Now uses true dynamic Geolocation to send lat/lon to the backend, which reverse-geocodes it!
+  const [riskData, setRiskData] = useState<RiskData | null>(null);
+
   useEffect(() => {
-    const fetchSignals = async (lat?: number, lon?: number) => {
+    const runAssessment = async () => {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-      
-      let userHourlyIncome = 100;
-      let userDailyHours = 8;
-      let userCity = 'Bangalore';
-      
+
       try {
         const storedUser = localStorage.getItem('surakshapay_user');
-        if (storedUser) {
-          const { id } = JSON.parse(storedUser);
-          const dashboardRes = await fetch(`${apiUrl}/api/dashboard/${id}`);
-          if (dashboardRes.ok) {
-            const dashboardData = await dashboardRes.json();
-            if (dashboardData && dashboardData.user) {
-              const { daily_earnings, work_hours, city } = dashboardData.user;
-              userDailyHours = work_hours || 8;
-              userHourlyIncome = daily_earnings && work_hours ? daily_earnings / work_hours : 100;
-              userCity = city || 'Bangalore';
-            }
-          }
+        if (!storedUser) return;
+
+        const { id } = JSON.parse(storedUser);
+
+        // Call the zero-touch assessment endpoint — this runs the full ML pipeline
+        // (fetches live signals → risk_model prediction → premium calculation → trigger checks)
+        const res = await fetch(`${apiUrl}/api/assess/from_user/${id}`, { method: 'POST' });
+
+        if (res.ok) {
+          const data = await res.json();
+          console.log('✅ Live ML Assessment:', data);
+
+          // Convert risk_probability (0.0-1.0) to a 0-100 score for the gauge
+          setRiskData({
+            riskScore: Math.round(data.risk.risk_probability * 100),
+            riskLevel: data.risk.risk_level,
+            factors: data.risk.contributing_factors,
+            riskProbability: data.risk.risk_probability,
+          });
         }
       } catch (err) {
-        console.error('Failed to fetch user dashboard data:', err);
+        console.error('Failed to run ML assessment:', err);
       }
-      
-      // We format userHourlyIncome to 2 decimal places to keep the URL clean
-      const formattedIncome = Number(userHourlyIncome).toFixed(2);
-      
-      const url = lat && lon 
-        ? `${apiUrl}/api/assess/signals?lat=${lat}&lon=${lon}&hourly_income=${formattedIncome}&daily_hours=${userDailyHours}`
-        : `${apiUrl}/api/assess/signals?city=${encodeURIComponent(userCity)}&hourly_income=${formattedIncome}&daily_hours=${userDailyHours}`; // Fallback
-        
-      fetch(url)
-        .then(res => res.json())
-        .then(data => console.log(`✅ Live Background Signals (${data.city}):`, data))
-        .catch(err => console.error('Failed to fetch signals:', err));
     };
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => fetchSignals(pos.coords.latitude, pos.coords.longitude),
-        () => fetchSignals() // Fallback if user blocks location
-      );
-    } else {
-      fetchSignals();
-    }
+    runAssessment();
   }, []);
 
   return (
@@ -68,7 +59,9 @@ const Dashboard = () => {
         <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}><QuickActions /></div>
         <div className="grid grid-cols-1 gap-4">
           <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}><CoverageCard /></div>
-          <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}><RiskGauge /></div>
+          <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+            <RiskGauge riskData={riskData} />
+          </div>
         </div>
         <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}><EarningsChart /></div>
       </div>

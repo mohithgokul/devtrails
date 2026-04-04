@@ -5,3 +5,7 @@ python-dotenv
 requests
 psycopg2-binary
 bcrypt
+scikit-learn
+joblib
+pandas
+numpy

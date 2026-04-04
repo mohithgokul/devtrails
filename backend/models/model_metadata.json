@@ -1,0 +1,18 @@
+{
+    "model_type": "RandomForest",
+    "feature_names": [
+        "rain",
+        "temp",
+        "aqi",
+        "demand_drop",
+        "curfew",
+        "hourly_income",
+        "daily_hours"
+    ],
+    "training_date": "2026-04-04T17:33:10.575095",
+    "mae": 0.015577472398796548,
+    "rmse": 0.02041464567934836,
+    "r2": 0.9886387172217244,
+    "training_samples": 8321,
+    "test_samples": 2081
+}
