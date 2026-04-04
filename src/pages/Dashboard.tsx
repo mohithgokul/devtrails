@@ -46,7 +46,8 @@ const Dashboard = () => {
         const storedUser = localStorage.getItem('surakshapay_user');
         if (!storedUser) return;
 
-        const { id } = JSON.parse(storedUser);
+        const storedUserObj = JSON.parse(storedUser);
+        const { id } = storedUserObj;
 
         // Call the zero-touch assessment endpoint — this runs the full ML pipeline
         // (fetches live signals → risk_model prediction → premium calculation → trigger checks)
@@ -77,6 +78,31 @@ const Dashboard = () => {
           console.log('📊 Feature Vector → risk_model:', data.feature_vector);
           console.log('🔗 API Sources:', data.sources);
         }
+
+        // Add explicit call to /api/assess/signals for network tab visibility
+        try {
+          const lat = storedUserObj.latitude;
+          const lon = storedUserObj.longitude;
+          const city = storedUserObj.city;
+          const hourlyIncome = storedUserObj.dailyEarnings / storedUserObj.workHours;
+          const dailyHours = storedUserObj.workHours;
+
+          let url = `${apiUrl}/api/assess/signals?hourly_income=${hourlyIncome}&daily_hours=${dailyHours}`;
+          if (lat && lon) {
+            url += `&lat=${lat}&lon=${lon}`;
+          } else if (city) {
+            url += `&city=${city}`;
+          }
+
+          const signalsRes = await fetch(url);
+          if (signalsRes.ok) {
+            const signalsData = await signalsRes.json();
+            console.log(`Live Background Signals (${signalsData.city}):`, signalsData);
+          }
+        } catch (e) {
+          console.log("Could not fetch background signals", e);
+        }
+
       } catch (err) {
         console.error('Failed to run ML assessment:', err);
       }
