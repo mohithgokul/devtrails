@@ -77,32 +77,24 @@ const Dashboard = () => {
           console.log('📡 Live Signals (raw_signals):', data.raw_signals);
           console.log('📊 Feature Vector → risk_model:', data.feature_vector);
           console.log('🔗 API Sources:', data.sources);
-        }
+          // Add explicit call to /api/assess/signals for network tab visibility
+          try {
+            const city = data.city || 'Bangalore';
+            const hourlyIncome = data.raw_signals.hourly_income || 100;
+            const dailyHours = data.raw_signals.daily_hours || 8;
 
-        // Add explicit call to /api/assess/signals for network tab visibility
-        try {
-          const lat = storedUserObj.latitude;
-          const lon = storedUserObj.longitude;
-          const city = storedUserObj.city;
-          const hourlyIncome = storedUserObj.dailyEarnings / storedUserObj.workHours;
-          const dailyHours = storedUserObj.workHours;
+            const url = `${apiUrl}/api/assess/signals?hourly_income=${hourlyIncome}&daily_hours=${dailyHours}&city=${encodeURIComponent(city)}`;
 
-          let url = `${apiUrl}/api/assess/signals?hourly_income=${hourlyIncome}&daily_hours=${dailyHours}`;
-          if (lat && lon) {
-            url += `&lat=${lat}&lon=${lon}`;
-          } else if (city) {
-            url += `&city=${city}`;
+            const signalsRes = await fetch(url);
+            if (signalsRes.ok) {
+              const signalsData = await signalsRes.json();
+              console.log(`Live Background Signals (${signalsData.city}):`, signalsData);
+            }
+          } catch (e) {
+            console.log("Could not fetch background signals", e);
           }
 
-          const signalsRes = await fetch(url);
-          if (signalsRes.ok) {
-            const signalsData = await signalsRes.json();
-            console.log(`Live Background Signals (${signalsData.city}):`, signalsData);
-          }
-        } catch (e) {
-          console.log("Could not fetch background signals", e);
         }
-
       } catch (err) {
         console.error('Failed to run ML assessment:', err);
       }
