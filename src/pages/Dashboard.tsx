@@ -6,6 +6,7 @@ import CoverageCard from '@/components/dashboard/CoverageCard';
 import RiskGauge from '@/components/dashboard/RiskGauge';
 import EarningsChart from '@/components/dashboard/EarningsChart';
 import QuickActions from '@/components/dashboard/QuickActions';
+import SignalsCard from '@/components/dashboard/SignalsCard';
 
 interface RiskData {
   riskScore: number;
@@ -14,8 +15,28 @@ interface RiskData {
   riskProbability: number;
 }
 
+interface SignalsData {
+  city: string;
+  raw_signals: {
+    rain: number;
+    temp: number;
+    aqi: number;
+    demand_drop: number;
+    curfew: number;
+    hourly_income: number;
+    daily_hours: number;
+  };
+  feature_vector: number[];
+  sources: {
+    weather?: string;
+    aqi?: string;
+    news?: string;
+  };
+}
+
 const Dashboard = () => {
   const [riskData, setRiskData] = useState<RiskData | null>(null);
+  const [signalsData, setSignalsData] = useState<SignalsData | null>(null);
 
   useEffect(() => {
     const runAssessment = async () => {
@@ -42,6 +63,19 @@ const Dashboard = () => {
             factors: data.risk.contributing_factors,
             riskProbability: data.risk.risk_probability,
           });
+
+          // Capture live signals for the SignalsCard — shows exactly what
+          // was fetched from external APIs and sent into the risk_model
+          setSignalsData({
+            city: data.city ?? '',
+            raw_signals: data.raw_signals,
+            feature_vector: data.feature_vector,
+            sources: data.sources,
+          });
+
+          console.log('📡 Live Signals (raw_signals):', data.raw_signals);
+          console.log('📊 Feature Vector → risk_model:', data.feature_vector);
+          console.log('🔗 API Sources:', data.sources);
         }
       } catch (err) {
         console.error('Failed to run ML assessment:', err);
@@ -61,6 +95,10 @@ const Dashboard = () => {
           <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}><CoverageCard /></div>
           <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
             <RiskGauge riskData={riskData} />
+          </div>
+          {/* Live signals panel — shows raw API data sent to risk_model */}
+          <div className="animate-fade-in-up" style={{ animationDelay: '350ms' }}>
+            <SignalsCard signalsData={signalsData} />
           </div>
         </div>
         <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}><EarningsChart /></div>
