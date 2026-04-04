@@ -26,11 +26,10 @@ const PremiumCalc = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            fullName: 'Calculator',
-            phone: '0000000000',
             workHours: hours,
             dailyEarnings: income / 5, // Approximate daily earnings
-            selectedPlan: selectedPlan
+            selectedPlan: selectedPlan,
+            riskLevel: riskLevel
           })
         });
         if (res.ok) {

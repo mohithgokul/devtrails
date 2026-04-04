@@ -177,6 +177,12 @@ class CalculationResult(BaseModel):
     expectedLoss:      float
     payoutIfTriggered: float
 
+class PremiumBaseRequest(BaseModel):
+    workHours:      int
+    dailyEarnings:  float
+    selectedPlan:   str
+    riskLevel:      Optional[int] = 30  # Default to 30% if not provided
+
 
 # ---------------------------------------------------------------------------
 # Root / health check
@@ -197,37 +203,29 @@ def read_root():
 # ---------------------------------------------------------------------------
 
 @app.post("/api/calculate_premium", response_model=CalculationResult, tags=["Premium"])
-def calculate_premium_endpoint(req: UserRegistration):
+def calculate_premium_endpoint(req: PremiumBaseRequest):
     """
-    Quick static premium calculation using a fixed disruption probability (p=0.3).
-    Does NOT call any external APIs — instant response for pre-registration preview.
-    For real-time, data-driven assessment use POST /api/assess instead.
+    Static premium calculation. Uses the core actuarial formula from premium_model.py.
+    Provides instant response for pre-registration previews or the Premium Calculator.
     """
+    from premium_model import calculate_premium
+    
     # Derived hourly income, guard against zero work hours
     avg_hourly_income = req.dailyEarnings / max(req.workHours, 1)
 
-    # Expected weekly loss: avg_hourly_income × hours_lost_per_event × events_per_week
-    hours_lost_per_event = 4.0
-    events_per_week      = 1.5
-    L_w = avg_hourly_income * hours_lost_per_event * events_per_week
+    risk_prob = req.riskLevel / 100.0
 
-    p = 0.3  # Fixed probability for static (non-real-time) estimate
-
-    # Coverage factors by plan
-    alpha_map = {"basic": 0.6, "standard": 0.7, "pro": 0.85}
-    alpha = alpha_map.get(req.selectedPlan.lower(), 0.7)
-
-    # Actuarial constants (see premium_model.py for full documentation)
-    sigma = 269.0
-    beta  = 0.2
-    M     = 10.0
-
-    P_w = round((L_w * p * alpha) + (sigma * beta) + M, 2)
+    res = calculate_premium(
+        risk_probability=risk_prob,
+        hourly_income=avg_hourly_income,
+        daily_hours=req.workHours,
+        plan=req.selectedPlan
+    )
 
     return CalculationResult(
-        premium           = P_w,
-        expectedLoss      = round(L_w, 2),
-        payoutIfTriggered = round(L_w * alpha, 2),
+        premium           = res["weekly_premium"],
+        expectedLoss      = res["expected_loss"],
+        payoutIfTriggered = res["payout_if_triggered"],
     )
 
 
@@ -246,7 +244,13 @@ def register_user(req: UserRegistration):
     - Creates an initial 'active' policy in the policies table.
     """
     # Calculate static premium for initial policy record
-    calc    = calculate_premium_endpoint(req)
+    calc_req = PremiumBaseRequest(
+        workHours=req.workHours,
+        dailyEarnings=req.dailyEarnings,
+        selectedPlan=req.selectedPlan,
+        riskLevel=30
+    )
+    calc    = calculate_premium_endpoint(calc_req)
     premium = calc.premium
 
     # Resolve city: prefer explicit city, fall back to reverse geocode from coords
