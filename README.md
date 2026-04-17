@@ -24,6 +24,7 @@
 
 11. [![Conclusion](https://img.shields.io/badge/Conclusion-brightgreen)](#11-conclusion)
 
+PITCH DECK: https://drive.google.com/drive/folders/1KZysQF68qAMj9zodJ7f0qOJyKZ9R_xiU?usp=sharing
 ---
 
 ## 1. Problem Statement:
