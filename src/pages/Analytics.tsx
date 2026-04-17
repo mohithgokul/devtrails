@@ -1,22 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import GlassCard from '@/components/layout/GlassCard';
-import { premiumHistory } from '@/lib/mockData';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, BarChart, Bar } from 'recharts';
 
 type Tab = 'premium' | 'payout' | 'risk';
 
-const riskTrend = [
-  { month: 'Jan', score: 42 },
-  { month: 'Feb', score: 38 },
-  { month: 'Mar', score: 35 },
-  { month: 'Apr', score: 40 },
-  { month: 'May', score: 33 },
-  { month: 'Jun', score: 30 },
-];
-
 const Analytics = () => {
   const [tab, setTab] = useState<Tab>('premium');
+  const [premiumHistory, setPremiumHistory] = useState<any[]>([]);
+  const [riskTrend, setRiskTrend] = useState<any[]>([]);
+  const [totalPremium, setTotalPremium] = useState<number>(0);
+  const [totalPayout, setTotalPayout] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const storedUser = localStorage.getItem('surakshapay_user');
+        if (!storedUser) return;
+        
+        const { id } = JSON.parse(storedUser);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        
+        const res = await fetch(`${apiUrl}/api/analytics/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPremiumHistory(data.premiumHistory);
+          setRiskTrend(data.riskTrend);
+          setTotalPremium(data.totalPremium);
+          setTotalPayout(data.totalPayout);
+        }
+      } catch (e) {
+        console.error('Failed to fetch analytics:', e);
+      }
+    };
+    fetchAnalytics();
+  }, []);
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'premium', label: 'Premium' },
@@ -86,11 +104,11 @@ const Analytics = () => {
         <div className="grid grid-cols-2 gap-3 mt-4">
           <GlassCard className="text-center animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             <p className="text-xs text-muted-foreground">Total Premium</p>
-            <p className="text-xl font-bold text-foreground">₹1,105</p>
+            <p className="text-xl font-bold text-foreground">₹{totalPremium.toLocaleString()}</p>
           </GlassCard>
           <GlassCard className="text-center animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <p className="text-xs text-muted-foreground">Total Payouts</p>
-            <p className="text-xl font-bold text-secondary">₹1,250</p>
+            <p className="text-xl font-bold text-secondary">₹{totalPayout.toLocaleString()}</p>
           </GlassCard>
         </div>
       </div>
