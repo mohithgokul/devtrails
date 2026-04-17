@@ -252,6 +252,26 @@ def file_claim(req: FileClaimRequest):
     ))
 
     claim_id = cursor.fetchone()["id"]
+    
+    # ── 14. INITIATE PAYOUT IF APPROVED ───────────────────────────────────────
+    import asyncio
+    from payout_router import initiate_payout_for_claim
+    payout_details = {}
+    if final_status == "approved":
+        try:
+            # We run the async payout engine blocking because we're in a sync def thread
+            payout_res = asyncio.run(initiate_payout_for_claim(
+                claim_id=claim_id,
+                worker_id=req.user_id,
+                trigger_type=req.trigger_type,
+                disruption_hours=4.0, # Defaulting for claim files
+                trigger_data={}
+            ))
+            payout_details = payout_res
+        except Exception as e:
+            print(f"[file_claim] Payout initiation failed: {e}")
+            final_status = "approved_but_payout_failed"
+
 
     # ── Notify admin of new claim ─────────────────────────────────────────────
     worker_name = user.get("full_name", f"User #{req.user_id}")
@@ -271,6 +291,7 @@ def file_claim(req: FileClaimRequest):
         "trigger_type":  req.trigger_type,
         "status":        final_status,
         "payout_amount": payout_amount,
+        "payout_result": payout_details,
         # ── Fraud model output ──
         "fraud_score":   round(res.fraud_score, 4),
         "trust_score":   res.trust_score,

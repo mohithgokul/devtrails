@@ -31,6 +31,7 @@ from assessment_router import router as assessment_router
 from claims_router import router as claims_router
 from policies_router import router as policies_router
 from admin_router import router as admin_router
+from payout_router import router as payout_router
 
 app = FastAPI(
     title="SurakshaPay Backend",
@@ -129,7 +130,13 @@ def init_db():
             email             TEXT UNIQUE,
             password_hash     TEXT,
             role              TEXT DEFAULT 'worker',
-            created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            razorpay_contact_id VARCHAR DEFAULT NULL,
+            razorpay_fund_acct_id VARCHAR DEFAULT NULL,
+            upi_id VARCHAR DEFAULT NULL,
+            bank_account_number VARCHAR DEFAULT NULL,
+            bank_ifsc VARCHAR DEFAULT NULL,
+            daily_rate_inr FLOAT DEFAULT 700.0
         )
     ''')
 
@@ -170,6 +177,14 @@ def init_db():
             fraud_type_suspected TEXT,
             fraud_flags      TEXT,
             created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            payout_amount_inr FLOAT DEFAULT NULL,
+            payout_amount_paise INTEGER DEFAULT NULL,
+            disruption_hours FLOAT DEFAULT NULL,
+            razorpay_payout_id VARCHAR DEFAULT NULL,
+            payout_status VARCHAR DEFAULT NULL,
+            payout_initiated_at TIMESTAMP DEFAULT NULL,
+            payout_completed_at TIMESTAMP DEFAULT NULL,
+            payment_mode VARCHAR DEFAULT NULL,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
@@ -202,6 +217,21 @@ def init_db():
         ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_decision TEXT"),
         ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_type_suspected TEXT"),
         ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_flags TEXT"),
+        # Payouts additions
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS razorpay_contact_id VARCHAR DEFAULT NULL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS razorpay_fund_acct_id VARCHAR DEFAULT NULL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS upi_id VARCHAR DEFAULT NULL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS bank_account_number VARCHAR DEFAULT NULL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS bank_ifsc VARCHAR DEFAULT NULL"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS daily_rate_inr FLOAT DEFAULT 700.0"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payout_amount_inr FLOAT DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payout_amount_paise INTEGER DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS disruption_hours FLOAT DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS razorpay_payout_id VARCHAR DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payout_status VARCHAR DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payout_initiated_at TIMESTAMP DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payout_completed_at TIMESTAMP DEFAULT NULL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS payment_mode VARCHAR DEFAULT NULL"),
     ]
     for _, sql in migration_columns:
         try:
