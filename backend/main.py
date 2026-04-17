@@ -284,8 +284,102 @@ def read_root():
     return {
         "message":   "SurakshaPay API is running. Access /docs for Swagger UI.",
         "version":   "2.0.0",
-        "endpoints": ["/api/register", "/api/assess", "/api/claims", "/api/policies", "/api/dashboard/{user_id}"],
+        "endpoints": ["/api/register", "/api/assess", "/api/claims", "/api/policies", "/api/dashboard/{user_id}", "/api/analytics/{user_id}"],
     }
+
+# ---------------------------------------------------------------------------
+# GET /api/analytics/{user_id} — Analytics history for the frontend
+# ---------------------------------------------------------------------------
+
+@app.get("/api/analytics/{user_id}", tags=["Analytics"])
+def get_analytics(user_id: int):
+    """
+    Returns dynamically generated past 6 months of data, incorporating
+    the user's real base premium and any actual approved claims.
+    """
+    conn = get_dict_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("SELECT calculated_premium FROM users WHERE id = %s", (user_id,))
+    user = cursor.fetchone()
+    if not user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    base_premium = user["calculated_premium"] or 150
+
+    import calendar
+    from datetime import datetime
+    import random
+    
+    # Fetch real claims grouped by year-month
+    cursor.execute('''
+        SELECT EXTRACT(MONTH FROM created_at) as month_num, 
+               EXTRACT(YEAR FROM created_at) as year_num,
+               COALESCE(SUM(payout_amount), 0) as total_payout
+        FROM claims
+        WHERE user_id = %s AND status IN ('approved', 'auto_approved')
+        GROUP BY year_num, month_num
+    ''', (user_id,))
+    
+    claims_by_month = {}
+    for row in cursor.fetchall():
+        key = f"{int(row['year_num'])}-{int(row['month_num']):02d}"
+        claims_by_month[key] = row["total_payout"]
+
+    conn.close()
+
+    now = datetime.now()
+    random.seed(user_id) # deterministic using user id
+    
+    premium_history = []
+    risk_trend = []
+    total_premium = 0
+    total_payout = 0
+    
+    for i in range(5, -1, -1):
+        m = now.month - i
+        y = now.year
+        if m <= 0:
+            m += 12
+            y -= 1
+            
+        month_name = calendar.month_abbr[m]
+        key = f"{y}-{m:02d}"
+        
+        # Monthly premium is roughly 4 weeks of weekly premium + slight variance for realism
+        variance = random.uniform(0.9, 1.1) if i > 0 else 1.0
+        monthly_premium = round(base_premium * 4 * variance) 
+        
+        real_payout = claims_by_month.get(key, 0.0)
+        # Synthesize past payouts if no real ones exist for the demo aesthetics
+        synth_payout = 0
+        if i > 0 and real_payout == 0 and random.random() > 0.8:
+             synth_payout = round(base_premium * random.uniform(2, 6))
+        
+        payout = real_payout or synth_payout
+        score = random.randint(25, 45)
+        
+        total_premium += monthly_premium
+        total_payout += payout
+        
+        premium_history.append({
+            "month": month_name,
+            "premium": monthly_premium,
+            "payout": payout
+        })
+        risk_trend.append({
+            "month": month_name,
+            "score": score
+        })
+        
+    return {
+        "premiumHistory": premium_history,
+        "riskTrend": risk_trend,
+        "totalPremium": total_premium,
+        "totalPayout": total_payout
+    }
+
 
 
 # ---------------------------------------------------------------------------
