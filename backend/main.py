@@ -14,16 +14,23 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
+from dotenv import load_dotenv
+load_dotenv()  # Load DATABASE_URL and SECRET_KEY from .env file
 import psycopg2
 import psycopg2.extras
 import bcrypt
 import math
 from typing import List, Optional
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends
 
 # Import all feature routers
 from assessment_router import router as assessment_router
 from claims_router import router as claims_router
 from policies_router import router as policies_router
+from admin_router import router as admin_router
 
 app = FastAPI(
     title="SurakshaPay Backend",
@@ -41,9 +48,37 @@ app.add_middleware(
 )
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_for_surakshapay_fastapi_001")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
 
-# ---------------------------------------------------------------------------
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int = payload.get("user_id")
+        role: str = payload.get("role")
+        if user_id is None:
+            raise credentials_exception
+        return {"user_id": user_id, "role": role}
+    except JWTError:
+        raise credentials_exception# ---------------------------------------------------------------------------
 # Database Initialization — Phase 2 schema with safe ALTER TABLE migrations
 # ---------------------------------------------------------------------------
 
@@ -73,7 +108,8 @@ def init_db():
             latitude          REAL,
             longitude         REAL,
             email             TEXT UNIQUE,
-            password_hash     TEXT
+            password_hash     TEXT,
+            role              TEXT DEFAULT 'worker'
         )
     ''')
 
@@ -113,6 +149,17 @@ def init_db():
         )
     ''')
 
+    # ── Notifications table ──────────────────────────────────────────────────
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS notifications (
+            id                SERIAL PRIMARY KEY,
+            message           TEXT,
+            type              TEXT,
+            is_read           BOOLEAN DEFAULT FALSE,
+            created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     # ── Safe migrations — upgrade existing Phase 1 DB without dropping data ──
     # Each ALTER TABLE is wrapped in try/except; OperationalError means the
     # column already exists (SQLite doesn't support IF NOT EXISTS for columns).
@@ -122,6 +169,7 @@ def init_db():
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS longitude REAL"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS email     TEXT UNIQUE"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS password_hash TEXT"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS role      TEXT DEFAULT 'worker'"),
         ("policies", "ALTER TABLE policies ADD COLUMN IF NOT EXISTS status    TEXT DEFAULT 'active'"),
     ]
     for _, sql in migration_columns:
@@ -130,6 +178,16 @@ def init_db():
             conn.commit()
         except Exception:
             conn.rollback()
+
+    # Seed an admin user if not exists
+    cursor.execute("SELECT id FROM users WHERE email = 'admin@surakshapay.com'")
+    if not cursor.fetchone():
+        admin_pwd = bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        cursor.execute('''
+            INSERT INTO users (full_name, phone, work_hours, daily_earnings, weekly_income, email, password_hash, role)
+            VALUES ('System Admin', '0000000000', 0, 0, 0, 'admin@surakshapay.com', %s, 'admin')
+        ''', (admin_pwd,))
+        conn.commit()
 
     conn.commit()
     conn.close()
@@ -142,6 +200,7 @@ init_db()
 app.include_router(assessment_router)
 app.include_router(claims_router)
 app.include_router(policies_router)
+app.include_router(admin_router)
 
 
 # ---------------------------------------------------------------------------
@@ -297,14 +356,27 @@ def register_user(req: UserRegistration):
         VALUES (%s, %s, %s, %s, 'active')
     ''', (user_id, req.selectedPlan, alpha, premium))
 
+    # Insert notification for admin
+    cursor.execute('''
+        INSERT INTO notifications (message, type)
+        VALUES (%s, 'registration')
+    ''', (f"New worker registered: {req.fullName} from {city}",))
+
     conn.commit()
     conn.close()
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"user_id": user_id, "role": "worker"}, expires_delta=access_token_expires
+    )
 
     return {
         "message": "User and policy registered successfully",
         "user_id": user_id,
+        "role":    "worker",
         "premium": premium,
         "city":    city,
+        "token":   access_token
     }
 
 
@@ -320,7 +392,7 @@ def login_user(req: UserLogin):
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
-        SELECT id, full_name, selected_plan, calculated_premium, password_hash 
+        SELECT id, full_name, selected_plan, calculated_premium, password_hash, role 
         FROM users 
         WHERE email = %s 
         ORDER BY id DESC LIMIT 1
@@ -332,11 +404,18 @@ def login_user(req: UserLogin):
     if not user or not bcrypt.checkpw(req.password.encode('utf-8'), user["password_hash"].encode('utf-8')):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"user_id": user["id"], "role": user.get("role", "worker")}, expires_delta=access_token_expires
+    )
+
     return {
         "user_id": user["id"],
         "name":    user["full_name"],
         "plan":    user["selected_plan"],
         "premium": user["calculated_premium"],
+        "role":    user.get("role", "worker"),
+        "token":   access_token
     }
 
 

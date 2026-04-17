@@ -86,8 +86,6 @@ def file_claim(req: FileClaimRequest):
         payout_amount  = 0.0
 
     # ── Insert claim with 'pending' status ────────────────────────────────────
-    # Manual claims need admin review; auto-approved claims bypass this flow.
-    # We store 'unknown' for signal fields since they weren't measured at filing time.
     cursor.execute('''
         INSERT INTO claims (
             user_id, trigger_type, risk_level, risk_probability,
@@ -97,6 +95,14 @@ def file_claim(req: FileClaimRequest):
     ''', (req.user_id, req.trigger_type, payout_amount))
 
     claim_id = cursor.fetchone()[0]
+
+    # ── Notify admin of new claim ─────────────────────────────────────────────
+    worker_name = user.get("full_name", f"User #{req.user_id}")
+    cursor.execute('''
+        INSERT INTO notifications (message, type)
+        VALUES (%s, 'claim')
+    ''', (f"New claim #{claim_id} filed by {worker_name} — trigger: {req.trigger_type}",))
+
     conn.commit()
     conn.close()
 

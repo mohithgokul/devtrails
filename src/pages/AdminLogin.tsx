@@ -8,8 +8,42 @@ const AdminLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        if (email && password) navigate('/admin');
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleLogin = async () => {
+        if (!email || !password) return;
+        setIsLoading(true);
+        setErrorMsg('');
+        try {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const res = await fetch(`${apiUrl}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.role === 'admin') {
+                    localStorage.setItem('surakshapay_admin', JSON.stringify({
+                        id: data.user_id,
+                        name: data.name,
+                        token: data.token,
+                        role: data.role
+                    }));
+                    navigate('/admin');
+                } else {
+                    setErrorMsg('Unauthorized access. Admin privileges required.');
+                }
+            } else {
+                setErrorMsg('Invalid credentials');
+            }
+        } catch (error) {
+            setErrorMsg('Unable to connect to server');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -20,7 +54,7 @@ const AdminLogin = () => {
                 </button>
 
                 <div className="text-center mb-8 animate-fade-in-up">
-                    <img src={logo} alt="SurakshaPay" className="w-32 h-auto mx-auto mb-4 brightness-0 invert" />
+                    <img src={logo} alt="SurakshaPay" className="w-32 h-auto mx-auto mb-4 invert mix-blend-screen" />
                     <h1 className="text-2xl font-bold text-admin-foreground">Insurer Portal</h1>
                     <p className="text-sm text-admin-muted mt-1">Secure admin access</p>
                     <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full bg-admin-accent/20 text-admin-accent text-xs font-medium">
@@ -51,12 +85,15 @@ const AdminLogin = () => {
                         />
                     </div>
 
+                    {errorMsg && (
+                        <p className="text-red-500 text-xs font-semibold text-center mb-2">{errorMsg}</p>
+                    )}
                     <button
                         onClick={handleLogin}
-                        disabled={!email || !password}
+                        disabled={!email || !password || isLoading}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-r from-admin to-admin-accent text-white font-semibold text-sm shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl transition-all active:scale-[0.98]"
                     >
-                        Login to Dashboard
+                        {isLoading ? 'Authenticating...' : 'Login to Dashboard'}
                     </button>
                 </div>
 

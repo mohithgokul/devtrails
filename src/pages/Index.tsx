@@ -31,6 +31,8 @@ const Index = () => {
       name: userData.name,
       plan: userData.plan,
       premium: userData.premium,
+      role: userData.role,
+      token: userData.token,
     }));
     navigate('/dashboard');
   }, [navigate]);
@@ -57,6 +59,8 @@ const Index = () => {
             name: data.fullName,
             plan: data.selectedPlan,
             premium: result.premium,
+            role: result.role,
+            token: result.token,
           }));
         }
       } catch (error) {
