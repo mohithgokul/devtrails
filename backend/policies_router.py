@@ -11,13 +11,12 @@ Endpoints:
   DELETE /api/policies/{user_id}          → Cancel policy (soft delete, status='cancelled')
 """
 
-import os
 import psycopg2
 import psycopg2.extras
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+from db import get_connection, get_dict_connection
 
 # Plan definitions — single source of truth for this router
 # alpha = coverage factor (fraction of loss that is covered by the plan)
@@ -73,7 +72,7 @@ def get_policy(user_id: int):
     - Max weekly payout (weekly_income × alpha)
     - Status (always 'active' for a current policy)
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Verify user exists ────────────────────────────────────────────────────
@@ -145,7 +144,7 @@ def upgrade_plan(user_id: int, req: UpgradePlanRequest):
             detail=f"Invalid plan '{req.new_plan}'. Must be one of: {list(PLAN_DETAILS.keys())}",
         )
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── Fetch and validate user ───────────────────────────────────────────────
@@ -178,7 +177,7 @@ def upgrade_plan(user_id: int, req: UpgradePlanRequest):
         VALUES (%s, %s, %s, %s, 'active') RETURNING id
     ''', (user_id, new_plan, alpha, new_premium))
 
-    new_policy_id = cursor.fetchone()[0]
+    new_policy_id = cursor.fetchone()["id"]
 
     # ── Sync users table ──────────────────────────────────────────────────────
     cursor.execute('''
@@ -214,7 +213,7 @@ def cancel_policy(user_id: int):
     This is a soft delete — the record is retained for audit and historical claims.
     The user can re-register or upgrade to get a new active policy.
     """
-    conn   = psycopg2.connect(DATABASE_URL)
+    conn   = get_connection()
     cursor = conn.cursor()
 
     # ── Verify there is an active policy to cancel ────────────────────────────

@@ -23,7 +23,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import datetime, timedelta
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+from db import get_connection, get_dict_connection
 
 # How long to suppress duplicate triggers for the same user (in hours)
 # Prevents a single assessment loop from filing dozens of identical claims
@@ -138,7 +138,7 @@ def evaluate_triggers(
 
     # ── Auto-file claims for each fired trigger ───────────────────────────────
     if fired_triggers:
-        conn   = psycopg2.connect(DATABASE_URL)
+        conn   = get_connection()
         cursor = conn.cursor()
 
         for trigger in fired_triggers:
@@ -153,13 +153,14 @@ def evaluate_triggers(
                 trigger["claim_id"] = None  # Signal to caller: not filed this time
                 continue
 
-            # Insert auto-approved claim with full signal snapshot
+            # Insert auto-approved claim with full signal snapshot and perfect trust
             cursor.execute('''
                 INSERT INTO claims (
                     user_id, trigger_type, risk_level, risk_probability,
                     rain, aqi, demand_drop, curfew,
-                    payout_amount, status
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'auto_approved') RETURNING id
+                    payout_amount, status,
+                    fraud_score, trust_score, fraud_decision, fraud_type_suspected, fraud_flags
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'auto_approved', 0.0, 100, 'APPROVED', 'CLEAN', '[]') RETURNING id
             ''', (
                 user_id,
                 trigger_type,

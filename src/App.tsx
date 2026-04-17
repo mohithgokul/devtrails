@@ -11,6 +11,7 @@ import Analytics from "./pages/Analytics";
 import PremiumCalc from "./pages/PremiumCalc";
 import Claims from "./pages/Claims";
 import ClaimDetail from "./pages/ClaimDetail";
+import FileClaim from "./pages/FileClaim";
 import NotFound from "./pages/NotFound";
 
 import RoleSelection from "./pages/RoleSelection";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/calculator" element={<PremiumCalc />} />
           <Route path="/claims" element={<Claims />} />
+          <Route path="/claims/file" element={<FileClaim />} />
           <Route path="/claims/:id" element={<ClaimDetail />} />
           
           <Route path="/role-select" element={<RoleSelection />} />

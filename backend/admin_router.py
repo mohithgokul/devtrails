@@ -9,7 +9,7 @@ from typing import List
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+from db import get_connection, get_dict_connection
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_for_surakshapay_fastapi_001")
 ALGORITHM = "HS256"
 
@@ -41,7 +41,7 @@ def get_current_admin(token: str = Depends(oauth2_scheme)):
 
 @router.get("/stats")
 def get_admin_stats(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     
     # Policies count & total premiums
@@ -72,7 +72,7 @@ def get_admin_stats(admin_user: dict = Depends(get_current_admin)):
 
 @router.get("/workers")
 def get_admin_workers(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
         SELECT u.id, u.full_name, u.phone, u.city, p.plan_name, p.status,
@@ -88,7 +88,7 @@ def get_admin_workers(admin_user: dict = Depends(get_current_admin)):
 
 @router.get("/claims")
 def get_admin_claims(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
         SELECT c.id, c.trigger_type, c.payout_amount, c.status, c.created_at, u.full_name, u.city
@@ -102,7 +102,7 @@ def get_admin_claims(admin_user: dict = Depends(get_current_admin)):
 
 @router.get("/policies")
 def get_admin_policies(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
         SELECT p.id, p.plan_name, p.coverage_factor, p.weekly_premium, p.status, u.full_name, u.city 
@@ -121,7 +121,7 @@ def get_admin_policies(admin_user: dict = Depends(get_current_admin)):
 
 @router.get("/notifications")
 def get_notifications(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
         SELECT id, message, type, is_read, created_at
@@ -149,7 +149,7 @@ def get_notifications(admin_user: dict = Depends(get_current_admin)):
 
 @router.patch("/notifications/{notification_id}/read")
 def mark_notification_read(notification_id: int, admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
         "UPDATE notifications SET is_read = TRUE WHERE id = %s",
@@ -166,7 +166,7 @@ def mark_notification_read(notification_id: int, admin_user: dict = Depends(get_
 
 @router.patch("/notifications/mark-all-read")
 def mark_all_notifications_read(admin_user: dict = Depends(get_current_admin)):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("UPDATE notifications SET is_read = TRUE WHERE is_read = FALSE")
     conn.commit()
@@ -209,7 +209,7 @@ def get_worker_risk_scores(admin_user: dict = Depends(get_current_admin)):
     the economic signals, and neutral weather (no active disaster assumed).
     Returns workers sorted by risk_probability descending.
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
         SELECT u.id, u.full_name, u.city, u.work_hours, u.daily_earnings,

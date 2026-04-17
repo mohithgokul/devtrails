@@ -66,6 +66,11 @@ export const mockClaims = [
     activityValidated: true,
     coverageApplied: 70,
     lossCalculated: 400,
+    fraud_score: 0.08,
+    trust_score: 92,
+    fraud_decision: 'APPROVED',
+    fraud_type_suspected: 'CLEAN',
+    fraud_flags: [],
   },
   {
     id: 'CLM002',
@@ -77,6 +82,11 @@ export const mockClaims = [
     activityValidated: true,
     coverageApplied: 70,
     lossCalculated: 500,
+    fraud_score: 0.31,
+    trust_score: 69,
+    fraud_decision: 'HOLD',
+    fraud_type_suspected: 'GPS_SPOOFING',
+    fraud_flags: ['GPS vs cell tower gap: 45.2 km (moderate suspicion)'],
   },
   {
     id: 'CLM003',
@@ -88,6 +98,11 @@ export const mockClaims = [
     activityValidated: false,
     coverageApplied: 70,
     lossCalculated: 285,
+    fraud_score: 0.74,
+    trust_score: 26,
+    fraud_decision: 'BLOCKED',
+    fraud_type_suspected: 'FAKE_WEATHER',
+    fraud_flags: ['Rain discrepancy: claimed 62.0, actual 0.5', 'AQI discrepancy: claimed 320.0, actual 72.0'],
   },
 ];
 

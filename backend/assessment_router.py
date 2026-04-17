@@ -30,7 +30,7 @@ from risk_model import assess_risk
 from premium_model import calculate_premium
 from trigger_engine import evaluate_triggers
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+from db import get_dict_connection
 
 router = APIRouter(prefix="/api/assess", tags=["Assessment Pipeline"])
 
@@ -201,7 +201,7 @@ def assess_from_user(user_id: int):
     - "Refresh my risk score" button on the frontend dashboard
     - Any flow where the user doesn't need to re-enter their data
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))

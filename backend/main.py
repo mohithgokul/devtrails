@@ -47,7 +47,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/surakshapay")
+from db import get_connection, get_dict_connection, DATABASE_URL
+
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey_for_surakshapay_fastapi_001")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
@@ -78,7 +79,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credentials_exception
         return {"user_id": user_id, "role": role}
     except JWTError:
-        raise credentials_exception# ---------------------------------------------------------------------------
+        raise credentials_exception
+
+
+# ---------------------------------------------------------------------------
 # Database Initialization — Phase 2 schema with safe ALTER TABLE migrations
 # ---------------------------------------------------------------------------
 
@@ -87,8 +91,23 @@ def init_db():
     Creates all required tables if they don't exist.
     Also runs ALTER TABLE migrations so an existing Phase 1 DB is upgraded
     seamlessly without data loss.
+
+    Retries up to 5 times with exponential backoff — Railway's DB proxy
+    sometimes needs a few seconds to warm up before accepting connections.
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    import time
+    last_err = None
+    for attempt in range(1, 6):
+        try:
+            conn = get_connection()
+            break
+        except Exception as e:
+            last_err = e
+            print(f"[init_db] DB connection attempt {attempt}/5 failed: {e}")
+            time.sleep(2 ** attempt)  # 2, 4, 8, 16, 32 seconds
+    else:
+        raise RuntimeError(f"[init_db] Could not connect to database after 5 attempts: {last_err}")
+
     cursor = conn.cursor()
 
     # ── Users table ──────────────────────────────────────────────────────────
@@ -109,7 +128,8 @@ def init_db():
             longitude         REAL,
             email             TEXT UNIQUE,
             password_hash     TEXT,
-            role              TEXT DEFAULT 'worker'
+            role              TEXT DEFAULT 'worker',
+            created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
 
@@ -144,6 +164,11 @@ def init_db():
             curfew           INTEGER,
             payout_amount    REAL,
             status           TEXT DEFAULT 'pending',
+            fraud_score      REAL,
+            trust_score      INTEGER,
+            fraud_decision   TEXT,
+            fraud_type_suspected TEXT,
+            fraud_flags      TEXT,
             created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
@@ -170,7 +195,13 @@ def init_db():
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS email     TEXT UNIQUE"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS password_hash TEXT"),
         ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS role      TEXT DEFAULT 'worker'"),
+        ("users",    "ALTER TABLE users    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"),
         ("policies", "ALTER TABLE policies ADD COLUMN IF NOT EXISTS status    TEXT DEFAULT 'active'"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_score REAL"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS trust_score INTEGER"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_decision TEXT"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_type_suspected TEXT"),
+        ("claims",   "ALTER TABLE claims   ADD COLUMN IF NOT EXISTS fraud_flags TEXT"),
     ]
     for _, sql in migration_columns:
         try:
@@ -322,7 +353,7 @@ def register_user(req: UserRegistration):
     pwd_bytes = req.password.encode('utf-8')
     hashed_password = bcrypt.hashpw(pwd_bytes, bcrypt.gensalt()).decode('utf-8')
 
-    conn   = psycopg2.connect(DATABASE_URL)
+    conn   = get_connection()
     cursor = conn.cursor()
 
     try:
@@ -389,12 +420,12 @@ def login_user(req: UserLogin):
     """
     Simulates a secure login endpoint using email and bcrypt password verification.
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('''
-        SELECT id, full_name, selected_plan, calculated_premium, password_hash, role 
-        FROM users 
-        WHERE email = %s 
+        SELECT id, full_name, selected_plan, calculated_premium, password_hash, role
+        FROM users
+        WHERE email = %s
         ORDER BY id DESC LIMIT 1
     ''', (req.email,))
     user = cursor.fetchone()
@@ -426,7 +457,7 @@ def login_user(req: UserLogin):
 @app.get("/api/user/{user_id}", tags=["Users"])
 def get_user(user_id: int):
     """Returns the full user record from the DB."""
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     row = cursor.fetchone()
@@ -453,7 +484,7 @@ def get_dashboard(user_id: int):
 
     This avoids the frontend needing to make 4 separate API calls.
     """
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_dict_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # ── 1. Fetch user ────────────────────────────────────────────────────────
@@ -489,7 +520,8 @@ def get_dashboard(user_id: int):
 
     # ── 4. Recent 5 claims (activity feed) ───────────────────────────────────
     cursor.execute('''
-        SELECT id, trigger_type, status, payout_amount, risk_level, created_at
+        SELECT id, trigger_type, status, payout_amount, risk_level, created_at,
+               fraud_score, trust_score, fraud_decision, fraud_type_suspected, fraud_flags
         FROM claims
         WHERE user_id = %s
         ORDER BY created_at DESC
