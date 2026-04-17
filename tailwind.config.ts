@@ -57,6 +57,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        admin: {
+          DEFAULT: "hsl(222, 47%, 11%)",
+          foreground: "hsl(210, 40%, 98%)",
+          muted: "hsl(215, 20%, 65%)",
+          border: "hsl(217, 33%, 17.5%)",
+          accent: "hsl(239, 84%, 67%)",
+          content: "hsl(210, 40%, 96%)",
+          card: "hsl(217, 33%, 17.5%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
